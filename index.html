@@ -1,499 +1,409 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StyleCorner - Mobile</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-</head>
-<body class="bg-gray-100 font-sans">
-  <header class="bg-blue-700 text-white p-3 sticky top-0 z-10 shadow-md">
-    <div class="flex justify-between items-center max-w-4xl mx-auto">
-      <h1 class="text-lg font-bold flex items-center">
-        <i class="fas fa-tshirt mr-2"></i> StyleCorner
-      </h1>
-      <button id="menuToggle" class="text-2xl"><i class="fas fa-bars"></i></button>
-    </div>
-  </header>
-  <div id="menu" class="hidden max-w-4xl mx-auto bg-white p-3 shadow-md">
-    <nav class="flex flex-col space-y-2">
-      <a href="#partners" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-users mr-2"></i> Partners</a>
-      <a href="#inventory" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-box mr-2"></i> Inventory</a>
-      <a href="#purchase" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-shopping-cart mr-2"></i> Add Purchase</a>
-      <a href="#sale" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-money-bill mr-2"></i> Add Sale</a>
-      <a href="#refund" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-undo mr-2"></i> Add Refund</a>
-      <a href="#expense" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-wallet mr-2"></i> Add Expense</a>
-      <a href="#transactions" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-list mr-2"></i> Transactions</a>
-    </nav>
-  </div>
-  <div class="container mx-auto p-3 max-w-4xl">
-    <!-- Partners' Shares -->
-    <div id="partners" class="mb-4">
-      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-users mr-2"></i> Partners' Shares</h2>
-      <div class="grid grid-cols-1 gap-3" id="partnersList"></div>
-      <p class="mt-3 text-blue-800 text-sm flex items-center"><i class="fas fa-coins mr-2"></i> Total Cash: <span id="totalCash" class="font-bold ml-1">0 PKR</span></p>
-    </div>
+   <html lang="en">
+   <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>StyleCorner</title>
+     <script src="https://cdn.tailwindcss.com"></script>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+   </head>
+   <body class="bg-gray-50 font-sans">
+     <header class="bg-blue-600 text-white p-3 sticky top-0 z-10 shadow">
+       <div class="flex justify-between items-center max-w-5xl mx-auto">
+         <h1 class="text-lg font-bold flex items-center"><i class="fas fa-tshirt mr-2"></i> StyleCorner</h1>
+         <button id="menuToggle" class="text-2xl"><i class="fas fa-bars"></i></button>
+       </div>
+     </header>
+     <nav id="menu" class="hidden bg-white p-3 shadow max-w-5xl mx-auto">
+       <a href="#partners" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-users mr-2"></i> Partners</a>
+       <a href="#inventory" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-box mr-2"></i> Inventory</a>
+       <a href="#record" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-plus mr-2"></i> Record</a>
+       <a href="#transactions" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-list mr-2"></i> Transactions</a>
+     </nav>
+     <div class="container mx-auto p-3 max-w-5xl">
+       <!-- Partners' Shares -->
+       <div id="partners" class="mb-4">
+         <h2 class="text-lg font-semibold text-blue-800 flex justify-between items-center cursor-pointer" onclick="toggleSection('partnersList')">
+           <span><i class="fas fa-users mr-2"></i> Partners' Shares</span>
+           <i class="fas fa-chevron-down"></i>
+         </h2>
+         <div id="partnersList" class="hidden grid grid-cols-1 gap-3 mt-2"></div>
+         <p class="mt-2 text-blue-800 text-sm"><i class="fas fa-coins mr-2"></i> Total Cash: <span id="totalCash" class="font-bold">0 PKR</span></p>
+       </div>
 
-    <!-- Inventory -->
-    <div id="inventory" class="mb-4">
-      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-box mr-2"></i> Inventory</h2>
-      <div class="grid grid-cols-1 gap-3" id="inventoryList"></div>
-    </div>
+       <!-- Inventory -->
+       <div id="inventory" class="mb-4">
+         <h2 class="text-lg font-semibold text-blue-800 mb-2"><i class="fas fa-box mr-2"></i> Inventory</h2>
+         <div id="inventoryList" class="grid grid-cols-2 gap-2 sm:grid-cols-4"></div>
+       </div>
 
-    <!-- Add Purchase -->
-    <div id="purchase" class="mb-4">
-      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-shopping-cart mr-2"></i> Add Purchase</h2>
-      <div class="bg-white p-4 rounded-lg shadow-md">
-        <div class="grid grid-cols-1 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Category</label>
-            <select id="purchaseCategory" class="border p-2 rounded w-full text-sm">
-              <option value="Male Unstitched">Male Unstitched</option>
-              <option value="Female Unstitched">Female Unstitched</option>
-              <option value="Male Stitched">Male Stitched</option>
-              <option value="Female Stitched">Female Stitched</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Quantity</label>
-            <input id="purchaseQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full text-sm" min="1">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
-            <input id="purchaseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Supplier Name</label>
-            <input id="purchaseSupplier" type="text" placeholder="Supplier Name" class="border p-2 rounded w-full text-sm">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Receipt (Optional)</label>
-            <input id="purchaseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full text-sm">
-          </div>
-          <button onclick="addPurchase()" class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Purchase</button>
-        </div>
-      </div>
-    </div>
+       <!-- Record Transaction -->
+       <div id="record" class="mb-4">
+         <h2 class="text-lg font-semibold text-blue-800 mb-2"><i class="fas fa-plus mr-2"></i> Record Transaction</h2>
+         <div class="bg-white p-4 rounded-lg shadow">
+           <select id="transactionType" class="border p-2 rounded w-full text-sm mb-3" onchange="updateForm()">
+             <option value="purchase">Purchase</option>
+             <option value="sale">Sale</option>
+             <option value="refund">Refund</option>
+             <option value="expense">Expense</option>
+           </select>
+           <div id="transactionForm" class="grid grid-cols-1 gap-2"></div>
+         </div>
+       </div>
 
-    <!-- Add Sale -->
-    <div id="sale" class="mb-4">
-      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-money-bill mr-2"></i> Add Sale</h2>
-      <div class="bg-white p-4 rounded-lg shadow-md">
-        <div class="grid grid-cols-1 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Category</label>
-            <select id="saleCategory" class="border p-2 rounded w-full text-sm">
-              <option value="Male Unstitched">Male Unstitched</option>
-              <option value="Female Unstitched">Female Unstitched</option>
-              <option value="Male Stitched">Male Stitched</option>
-              <option value="Female Stitched">Female Stitched</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Quantity</label>
-            <input id="saleQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full text-sm" min="1">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
-            <input id="saleAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Customer Name</label>
-            <input id="saleCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full text-sm">
-          </div>
-          <button onclick="addSale()" class="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Sale</button>
-        </div>
-      </div>
-    </div>
+       <!-- Transactions -->
+       <div id="transactions">
+         <h2 class="text-lg font-semibold text-blue-800 mb-2 flex justify-between items-center">
+           <span><i class="fas fa-list mr-2"></i> Transactions</span>
+           <button id="toggleTransactions" class="text-blue-600 text-sm">Hide</button>
+         </h2>
+         <div id="transactionsList" class="space-y-2"></div>
+         <div class="mt-3 flex flex-wrap gap-2">
+           <button onclick="exportCSV('inventory')" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 text-sm"><i class="fas fa-download mr-1"></i> Export Inventory</button>
+           <button onclick="exportCSV('transactions')" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 text-sm"><i class="fas fa-download mr-1"></i> Export Transactions</button>
+           <button onclick="exportCSV('expenses')" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 text-sm"><i class="fas fa-download mr-1"></i> Export Expenses</button>
+         </div>
+       </div>
+     </div>
 
-    <!-- Add Refund -->
-    <div id="refund" class="mb-4">
-      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-undo mr-2"></i> Add Refund</h2>
-      <div class="bg-white p-4 rounded-lg shadow-md">
-        <div class="grid grid-cols-1 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Category</label>
-            <select id="refundCategory" class="border p-2 rounded w-full text-sm">
-              <option value="Male Unstitched">Male Unstitched</option>
-              <option value="Female Unstitched">Female Unstitched</option>
-              <option value="Male Stitched">Male Stitched</option>
-              <option value="Female Stitched">Female Stitched</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Quantity</label>
-            <input id="refundQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full text-sm" min="1">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
-            <input id="refundAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Customer Name</label>
-            <input id="refundCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full text-sm">
-          </div>
-          <button onclick="addRefund()" class="bg-yellow-500 text-white p-3 rounded-lg hover:bg-yellow-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Refund</button>
-        </div>
-      </div>
-    </div>
+     <script>
+       const SHEET_ID = "2PACX-1vRBKENsX7htg3uqDb7FOVbied6i2gg25J1oj9Xmnvw_hmS6fzFjpNsv4_KrJ6pmjqRj50VgTJSfhXyA";
+       const API_KEY = "AIzaSyCGwzmW2Ylzq4jHJmawcEOUxiv7WQSKGKI";
+       const partners = [
+         { name: "Hafsa", investment: 25000 },
+         { name: "Talha", investment: 25000 },
+         { name: "Waseem", investment: 25000 },
+         { name: "Atta", investment: 25000 }
+       ];
+       const PASSWORD = "2532";
+       let totalCash = partners.reduce((sum, p) => sum + p.investment, 0);
+       let inventory = [];
+       let transactions = [];
+       let expenses = [];
 
-    <!-- Add Expense -->
-    <div id="expense" class="mb-4">
-      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-wallet mr-2"></i> Add Expense</h2>
-      <div class="bg-white p-4 rounded-lg shadow-md">
-        <div class="grid grid-cols-1 gap-3">
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Type</label>
-            <select id="expenseType" class="border p-2 rounded w-full text-sm">
-              <option value="Stitching">Stitching</option>
-              <option value="Courier">Courier</option>
-              <option value="Marketing">Marketing</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
-            <input id="expenseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-gray-700">Receipt (Optional)</label>
-            <input id="expenseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full text-sm">
-          </div>
-          <button onclick="addExpense()" class="bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Expense</button>
-        </div>
-      </div>
-    </div>
+       // Toggle Section
+       function toggleSection(id) {
+         const el = document.getElementById(id);
+         el.classList.toggle("hidden");
+         el.previousElementSibling.querySelector("i.fa-chevron-down").classList.toggle("fa-chevron-up");
+       }
 
-    <!-- Transactions -->
-    <div id="transactions">
-      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex justify-between items-center">
-        <span><i class="fas fa-list mr-2"></i> Transactions</span>
-        <button id="toggleTransactions" class="text-blue-700 text-sm">Hide</button>
-      </h2>
-      <div id="transactionsList" class="space-y-3"></div>
-    </div>
-  </div>
+       // Load Data from Google Sheets
+       async function loadData() {
+         try {
+           const [invRes, transRes, expRes] = await Promise.all([
+             axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory?key=${API_KEY}`),
+             axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions?key=${API_KEY}`),
+             axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses?key=${API_KEY}`)
+           ]);
+           inventory = invRes.data.values.slice(1).map(row => ({
+             category: row[0],
+             quantity: parseInt(row[1]) || 0,
+             total_value: parseFloat(row[2]) || 0
+           })) || [
+             { category: "Male Unstitched", quantity: 0, total_value: 0 },
+             { category: "Female Unstitched", quantity: 0, total_value: 0 },
+             { category: "Male Stitched", quantity: 0, total_value: 0 },
+             { category: "Female Stitched", quantity: 0, total_value: 0 }
+           ];
+           transactions = transRes.data.values.slice(1).map(row => ({
+             type: row[0],
+             category: row[1] || "",
+             quantity: parseInt(row[2]) || "",
+             amount: parseFloat(row[3]) || 0,
+             date: row[4],
+             name: row[5] || ""
+           })) || [];
+           expenses = expRes.data.values.slice(1).map(row => ({
+             type: row[0],
+             amount: parseFloat(row[1]) || 0,
+             date: row[2],
+             receipt: row[3] || "None"
+           })) || [];
+           totalCash = parseFloat(localStorage.getItem("totalCash")) || partners.reduce((sum, p) => sum + p.investment, 0);
+           updateUI();
+         } catch (err) {
+           console.error("Error loading data:", err);
+           alert("Failed to load data from Google Sheets.");
+         }
+       }
 
-  <script>
-    const partners = [
-      { name: "Hafsa", investment: 25000 },
-      { name: "Talha", investment: 25000 },
-      { name: "Waseem", investment: 25000 },
-      { name: "Atta", investment: 25000 }
-    ];
-    const PASSWORD = "2532";
-    let totalCash = partners.reduce((sum, p) => sum + p.investment, 0);
-    let inventory = [];
-    let transactions = [];
-    let expenses = [];
+       // Save Data to Google Sheets
+       async function saveToSheets() {
+         try {
+           const invData = [["category", "quantity", "total_value"], ...inventory.map(i => [i.category, i.quantity, i.total_value])];
+           const transData = [["type", "category", "quantity", "amount", "date", "name"], ...transactions.map(t => [t.type, t.category, t.quantity, t.amount, t.date, t.name])];
+           const expData = [["type", "amount", "date", "receipt"], ...expenses.map(e => [e.type, e.amount, e.date, e.receipt])];
+           await Promise.all([
+             axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory:clear`, {}, { headers: { Authorization: `Bearer ${API_KEY}` } }),
+             axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions:clear`, {}, { headers: { Authorization: `Bearer ${API_KEY}` } }),
+             axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses:clear`, {}, { headers: { Authorization: `Bearer ${API_KEY}` } }),
+             axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory?valueInputOption=RAW`, { values: invData }, { headers: { Authorization: `Bearer ${API_KEY}` } }),
+             axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions?valueInputOption=RAW`, { values: transData }, { headers: { Authorization: `Bearer ${API_KEY}` } }),
+             axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses?valueInputOption=RAW`, { values: expData }, { headers: { Authorization: `Bearer ${API_KEY}` } })
+           ]);
+           localStorage.setItem("totalCash", totalCash.toString());
+         } catch (err) {
+           console.error("Error saving data:", err);
+           alert("Failed to save data to Google Sheets.");
+         }
+       }
 
-    // Load data from CSV files (mock for local development)
-    function loadData() {
-      inventory = [
-        { category: "Male Unstitched", quantity: 0, total_value: 0 },
-        { category: "Female Unstitched", quantity: 0, total_value: 0 },
-        { category: "Male Stitched", quantity: 0, total_value: 0 },
-        { category: "Female Stitched", quantity: 0, total_value: 0 }
-      ];
-      updateUI();
-    }
+       // Update UI
+       function updateUI() {
+         // Partners
+         const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
+         const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
+         document.getElementById("partnersList").innerHTML = partners.map(p => `
+           <div class="bg-white p-3 rounded-lg shadow flex items-center">
+             <i class="fas fa-user text-blue-600 mr-2"></i>
+             <div>
+               <p class="font-semibold text-blue-800 text-sm">${p.name}</p>
+               <p class="text-sm">${p.investment.toFixed(2)} PKR</p>
+               <p class="text-sm font-bold">${((p.investment / totalInvestment) * (profit + totalInvestment)).toFixed(2)} PKR</p>
+             </div>
+           </div>
+         `).join("");
+         document.getElementById("totalCash").textContent = `${totalCash.toFixed(2)} PKR`;
 
-    // Update UI
-    function updateUI() {
-      // Partners
-      const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
-      const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
-      const partnersHtml = partners.map(p => `
-        <div class="bg-white p-3 rounded-lg shadow-md flex items-center">
-          <i class="fas fa-user text-blue-700 mr-2"></i>
-          <div>
-            <p class="font-semibold text-blue-800 text-sm">${p.name}</p>
-            <p class="text-sm">Investment: ${p.investment.toFixed(2)} PKR</p>
-            <p class="text-sm font-bold">Share: ${((p.investment / totalInvestment) * (profit + totalInvestment)).toFixed(2)} PKR</p>
-          </div>
-        </div>
-      `).join("");
-      document.getElementById("partnersList").innerHTML = partnersHtml;
-      document.getElementById("totalCash").textContent = `${totalCash.toFixed(2)} PKR`;
+         // Inventory
+         document.getElementById("inventoryList").innerHTML = inventory.map(item => `
+           <div class="bg-white p-3 rounded-lg shadow flex items-center">
+             <i class="fas fa-tshirt text-blue-600 mr-2"></i>
+             <div>
+               <p class="font-medium text-blue-800 text-sm">${item.category}</p>
+               <p class="text-sm">${item.quantity}pcs</p>
+               <p class="text-sm">${item.total_value.toFixed(0)}</p>
+             </div>
+           </div>
+         `).join("");
 
-      // Inventory
-      const inventoryHtml = inventory.map(item => `
-        <div class="bg-white p-3 rounded-lg shadow-md flex items-center">
-          <i class="fas fa-tshirt text-blue-700 mr-2"></i>
-          <div>
-            <p class="font-medium text-blue-800 text-sm">${item.category}</p>
-            <p class="text-sm">Quantity: ${item.quantity}</p>
-            <p class="text-sm">Value: ${item.total_value.toFixed(2)} PKR</p>
-          </div>
-        </div>
-      `).join("");
-      document.getElementById("inventoryList").innerHTML = inventoryHtml;
+         // Transactions
+         const allTransactions = [...transactions, ...expenses.map(e => ({
+           type: "Expense",
+           category: "",
+           quantity: "",
+           amount: e.amount,
+           date: e.date,
+           name: e.type,
+           receipt: e.receipt
+         }))].sort((a, b) => new Date(b.date) - new Date(a.date));
+         document.getElementById("transactionsList").innerHTML = allTransactions.map((t, index) => `
+           <div class="bg-white p-3 rounded-lg shadow flex justify-between items-center">
+             <div class="text-sm">
+               <p class="font-medium ${t.type === 'Purchase' ? 'text-blue-600' : t.type === 'Sale' ? 'text-green-600' : t.type === 'Refund' ? 'text-yellow-600' : 'text-red-600'}">
+                 <i class="fas ${t.type === 'Purchase' ? 'fa-shopping-cart' : t.type === 'Sale' ? 'fa-money-bill' : t.type === 'Refund' ? 'fa-undo' : 'fa-wallet'} mr-2"></i>
+                 ${t.type}
+               </p>
+               ${t.category ? `<p>${t.category}</p>` : ""}
+               ${t.quantity ? `<p>${t.quantity}pcs</p>` : ""}
+               <p>${t.amount.toFixed(2)} PKR</p>
+               <p>${t.date}</p>
+               <p>${t.name}</p>
+               ${t.receipt !== "None" ? `<p>${t.receipt}</p>` : ""}
+             </div>
+             <button onclick="deleteTransaction(${index})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+           </div>
+         `).join("");
+       }
 
-      // Transactions (sorted by date descending)
-      const allTransactions = [
-        ...transactions,
-        ...expenses.map(e => ({
-          type: "Expense",
-          category: "",
-          quantity: "",
-          amount: e.amount,
-          date: e.date,
-          name: e.type,
-          receipt: e.receipt
-        }))
-      ].sort((a, b) => new Date(b.date) - new Date(a.date));
+       // Update Form
+       function updateForm() {
+         const type = document.getElementById("transactionType").value;
+         const commonFields = `
+           ${type !== "expense" ? `
+             <div>
+               <label class="block text-xs font-medium text-gray-700">Category</label>
+               <select id="category" class="border p-2 rounded w-full text-sm">
+                 <option value="Male Unstitched">Male Unstitched</option>
+                 <option value="Female Unstitched">Female Unstitched</option>
+                 <option value="Male Stitched">Male Stitched</option>
+                 <option value="Female Stitched">Female Stitched</option>
+               </select>
+             </div>
+             <div>
+               <label class="block text-xs font-medium text-gray-700">Quantity</label>
+               <input id="quantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full text-sm" min="1">
+             </div>
+           ` : ""}
+           <div>
+             <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
+             <input id="amount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
+           </div>
+         `;
+         document.getElementById("transactionForm").innerHTML = `
+           ${type === "expense" ? `
+             <div>
+               <label class="block text-xs font-medium text-gray-700">Type</label>
+               <select id="expenseType" class="border p-2 rounded w-full text-sm">
+                 <option value="Stitching">Stitching</option>
+                 <option value="Courier">Courier</option>
+                 <option value="Marketing">Marketing</option>
+                 <option value="Other">Other</option>
+               </select>
+             </div>
+           ` : `
+             <div>
+               <label class="block text-xs font-medium text-gray-700">${type === "purchase" ? "Supplier" : "Customer"} Name</label>
+               <input id="name" type="text" placeholder="${type === "purchase" ? "Supplier" : "Customer"} Name" class="border p-2 rounded w-full text-sm">
+             </div>
+           `}
+           ${commonFields}
+           ${type === "purchase" || type === "expense" ? `
+             <div>
+               <label class="block text-xs font-medium text-gray-700">Receipt (Optional)</label>
+               <input id="receipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full text-sm">
+             </div>
+           ` : ""}
+           <button onclick="addTransaction()" class="bg-${type === 'purchase' ? 'blue' : type === 'sale' ? 'green' : type === 'refund' ? 'yellow' : 'red'}-500 text-white p-2 rounded hover:bg-${type === 'purchase' ? 'blue' : type === 'sale' ? 'green' : type === 'refund' ? 'yellow' : 'red'}-600 text-sm"><i class="fas fa-plus mr-1"></i> Add ${type.charAt(0).toUpperCase() + type.slice(1)}</button>
+         `;
+       }
 
-      const transactionsHtml = allTransactions.map((t, index) => `
-        <div class="bg-white p-3 rounded-lg shadow-md flex flex-col sm:flex-row sm:justify-between sm:items-center">
-          <div class="text-sm">
-            <p class="font-medium text-blue-800 flex items-center">
-              <i class="fas ${t.type === 'Purchase' ? 'fa-shopping-cart' : t.type === 'Sale' ? 'fa-money-bill' : t.type === 'Refund' ? 'fa-undo' : 'fa-wallet'} mr-2"></i>
-              ${t.type}
-            </p>
-            ${t.category ? `<p>Category: ${t.category}</p>` : ""}
-            ${t.quantity ? `<p>Quantity: ${t.quantity}</p>` : ""}
-            <p>Amount: ${t.amount.toFixed(2)} PKR</p>
-            <p>Date: ${t.date}</p>
-            <p>Name: ${t.name}</p>
-            ${t.receipt ? `<p>Receipt: ${t.receipt}</p>` : ""}
-          </div>
-          <button onclick="deleteTransaction(${index})" class="mt-2 sm:mt-0 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm flex items-center"><i class="fas fa-trash mr-2"></i> Delete</button>
-        </div>
-      `).join("");
-      document.getElementById("transactionsList").innerHTML = transactionsHtml;
-    }
+       // Add Transaction
+       async function addTransaction() {
+         const type = document.getElementById("transactionType").value;
+         const category = document.getElementById("category")?.value;
+         const quantity = parseInt(document.getElementById("quantity")?.value) || 0;
+         const amount = parseFloat(document.getElementById("amount").value);
+         const name = document.getElementById("name")?.value;
+         const expenseType = document.getElementById("expenseType")?.value;
+         const receipt = document.getElementById("receipt")?.files[0];
 
-    // Add Purchase
-    function addPurchase() {
-      const category = document.getElementById("purchaseCategory").value;
-      const quantity = parseInt(document.getElementById("purchaseQuantity").value);
-      const amount = parseFloat(document.getElementById("purchaseAmount").value);
-      const supplier = document.getElementById("purchaseSupplier").value;
-      const receipt = document.getElementById("purchaseReceipt").files[0];
+         if ((type !== "expense" && category && quantity > 0 && amount > 0 && name) || (type === "expense" && expenseType && amount > 0)) {
+           if (type === "sale" && (!inventory.find(i => i.category === category) || inventory.find(i => i.category === category).quantity < quantity)) {
+             alert("Insufficient inventory!");
+             return;
+           }
 
-      if (category && quantity > 0 && amount > 0 && supplier) {
-        let item = inventory.find(i => i.category === category);
-        if (!item) {
-          item = { category, quantity: 0, total_value: 0 };
-          inventory.push(item);
-        }
-        item.quantity += quantity;
-        item.total_value += amount;
+           if (type !== "expense") {
+             let item = inventory.find(i => i.category === category);
+             if (!item && (type === "purchase" || type === "refund")) {
+               item = { category, quantity: 0, total_value: 0 };
+               inventory.push(item);
+             }
+             if (type === "purchase") {
+               item.quantity += quantity;
+               item.total_value += amount;
+               totalCash -= amount;
+             } else if (type === "sale") {
+               item.quantity -= quantity;
+               item.total_value -= (item.total_value / (item.quantity + quantity)) * quantity;
+               totalCash += amount;
+             } else if (type === "refund") {
+               item.quantity += quantity;
+               item.total_value += amount;
+               totalCash -= amount;
+             }
+             transactions.push({ type: type.charAt(0).toUpperCase() + type.slice(1), category, quantity, amount, date: new Date().toISOString().split("T")[0], name });
+           } else {
+             expenses.push({ type: expenseType, amount, date: new Date().toISOString().split("T")[0], receipt: receipt ? receipt.name : "None" });
+             totalCash -= amount;
+           }
 
-        transactions.push({
-          type: "Purchase",
-          category,
-          quantity,
-          amount,
-          date: new Date().toISOString().split("T")[0],
-          name: supplier,
-          receipt: receipt ? receipt.name : "None"
-        });
+           await saveToSheets();
+           updateUI();
+           document.getElementById("transactionForm").querySelectorAll("input, select").forEach(el => el.value = "");
+         } else {
+           alert("Please fill all fields correctly.");
+         }
+       }
 
-        totalCash -= amount;
-        console.log("Receipt uploaded:", receipt ? receipt.name : "None");
-        saveToCSV();
-        updateUI();
+       // Delete Transaction
+       async function deleteTransaction(index) {
+         const password = prompt("Enter password to delete:");
+         if (password !== PASSWORD) {
+           alert("Incorrect password!");
+           return;
+         }
 
-        document.getElementById("purchaseCategory").value = "Male Unstitched";
-        document.getElementById("purchaseQuantity").value = "";
-        document.getElementById("purchaseAmount").value = "";
-        document.getElementById("purchaseSupplier").value = "";
-        document.getElementById("purchaseReceipt").value = "";
-      } else {
-        alert("Please fill all fields correctly.");
-      }
-    }
+         const allTransactions = [...transactions, ...expenses.map(e => ({
+           type: "Expense",
+           category: "",
+           quantity: "",
+           amount: e.amount,
+           date: e.date,
+           name: e.type,
+           receipt: e.receipt
+         }))].sort((a, b) => new Date(b.date) - new Date(a.date));
+         const transaction = allTransactions[index];
 
-    // Add Sale
-    function addSale() {
-      const category = document.getElementById("saleCategory").value;
-      const quantity = parseInt(document.getElementById("saleQuantity").value);
-      const amount = parseFloat(document.getElementById("saleAmount").value);
-      const customer = document.getElementById("saleCustomer").value;
+         if (transaction.type === "Purchase") {
+           const item = inventory.find(i => i.category === transaction.category);
+           if (item) {
+             item.quantity -= transaction.quantity;
+             item.total_value -= transaction.amount;
+             if (item.quantity <= 0) inventory = inventory.filter(i => i.category !== transaction.category);
+           }
+           totalCash += transaction.amount;
+           transactions = transactions.filter(t => t !== transaction);
+         } else if (transaction.type === "Sale") {
+           const item = inventory.find(i => i.category === transaction.category);
+           if (item) {
+             item.quantity += transaction.quantity;
+             item.total_value += transaction.amount;
+           }
+           totalCash -= transaction.amount;
+           transactions = transactions.filter(t => t !== transaction);
+         } else if (transaction.type === "Refund") {
+           const item = inventory.find(i => i.category === transaction.category);
+           if (item) {
+             item.quantity -= transaction.quantity;
+             item.total_value -= transaction.amount;
+             if (item.quantity <= 0) inventory = inventory.filter(i => i.category !== transaction.category);
+           }
+           totalCash += transaction.amount;
+           transactions = transactions.filter(t => t !== transaction);
+         } else if (transaction.type === "Expense") {
+           totalCash += transaction.amount;
+           expenses = expenses.filter(e => e.date !== transaction.date || e.amount !== transaction.amount || e.type !== transaction.name);
+         }
 
-      if (category && quantity > 0 && amount > 0 && customer) {
-        const item = inventory.find(i => i.category === category);
-        if (!item || item.quantity < quantity) {
-          alert("Insufficient inventory!");
-          return;
-        }
+         await saveToSheets();
+         updateUI();
+       }
 
-        item.quantity -= quantity;
-        item.total_value -= (item.total_value / (item.quantity + quantity)) * quantity;
+       // Export CSV
+       function exportCSV(type) {
+         let data, headers, filename;
+         if (type === "inventory") {
+           headers = ["category", "quantity", "total_value"];
+           data = inventory;
+           filename = "inventory.csv";
+         } else if (type === "transactions") {
+           headers = ["type", "category", "quantity", "amount", "date", "name"];
+           data = transactions;
+           filename = "transactions.csv";
+         } else {
+           headers = ["type", "amount", "date", "receipt"];
+           data = expenses;
+           filename = "expenses.csv";
+         }
+         const csv = [headers.join(","), ...data.map(row => headers.map(h => row[h] || "").join(","))].join("\n");
+         const blob = new Blob([csv], { type: "text/csv" });
+         const url = URL.createObjectURL(blob);
+         const a = document.createElement("a");
+         a.href = url;
+         a.download = filename;
+         a.click();
+         URL.revokeObjectURL(url);
+       }
 
-        transactions.push({
-          type: "Sale",
-          category,
-          quantity,
-          amount,
-          date: new Date().toISOString().split("T")[0],
-          name: customer
-        });
+       // Toggle Transactions
+       document.getElementById("toggleTransactions").addEventListener("click", (e) => {
+         const list = document.getElementById("transactionsList");
+         list.classList.toggle("hidden");
+         e.target.textContent = list.classList.contains("hidden") ? "Show" : "Hide";
+       });
 
-        totalCash += amount;
-        saveToCSV();
-        updateUI();
+       // Menu Toggle
+       document.getElementById("menuToggle").addEventListener("click", () => {
+         document.getElementById("menu").classList.toggle("hidden");
+       });
 
-        document.getElementById("saleCategory").value = "Male Unstitched";
-        document.getElementById("saleQuantity").value = "";
-        document.getElementById("saleAmount").value = "";
-        document.getElementById("saleCustomer").value = "";
-      } else {
-        alert("Please fill all fields correctly.");
-      }
-    }
-
-    // Add Refund
-    function addRefund() {
-      const category = document.getElementById("refundCategory").value;
-      const quantity = parseInt(document.getElementById("refundQuantity").value);
-      const amount = parseFloat(document.getElementById("refundAmount").value);
-      const customer = document.getElementById("refundCustomer").value;
-
-      if (category && quantity > 0 && amount > 0 && customer) {
-        let item = inventory.find(i => i.category === category);
-        if (!item) {
-          item = { category, quantity: 0, total_value: 0 };
-          inventory.push(item);
-        }
-        item.quantity += quantity;
-        item.total_value += amount;
-
-        transactions.push({
-          type: "Refund",
-          category,
-          quantity,
-          amount,
-          date: new Date().toISOString().split("T")[0],
-          name: customer
-        });
-
-        totalCash -= amount;
-        saveToCSV();
-        updateUI();
-
-        document.getElementById("refundCategory").value = "Male Unstitched";
-        document.getElementById("refundQuantity").value = "";
-        document.getElementById("refundAmount").value = "";
-        document.getElementById("refundCustomer").value = "";
-      } else {
-        alert("Please fill all fields correctly.");
-      }
-    }
-
-    // Add Expense
-    function addExpense() {
-      const type = document.getElementById("expenseType").value;
-      const amount = parseFloat(document.getElementById("expenseAmount").value);
-      const receipt = document.getElementById("expenseReceipt").files[0];
-
-      if (type && amount > 0) {
-        expenses.push({
-          type,
-          amount,
-          date: new Date().toISOString().split("T")[0],
-          receipt: receipt ? receipt.name : "None"
-        });
-
-        totalCash -= amount;
-        saveToCSV();
-        updateUI();
-
-        document.getElementById("expenseType").value = "Stitching";
-        document.getElementById("expenseAmount").value = "";
-        document.getElementById("expenseReceipt").value = "";
-      } else {
-        alert("Please fill all fields correctly.");
-      }
-    }
-
-    // Delete Transaction
-    function deleteTransaction(index) {
-      const password = prompt("Enter password to delete transaction:");
-      if (password !== PASSWORD) {
-        alert("Incorrect password!");
-        return;
-      }
-
-      const allTransactions = [
-        ...transactions,
-        ...expenses.map(e => ({
-          type: "Expense",
-          category: "",
-          quantity: "",
-          amount: e.amount,
-          date: e.date,
-          name: e.type,
-          receipt: e.receipt
-        }))
-      ].sort((a, b) => new Date(b.date) - new Date(a.date));
-
-      const transaction = allTransactions[index];
-
-      if (transaction.type === "Purchase") {
-        const item = inventory.find(i => i.category === transaction.category);
-        if (item) {
-          item.quantity -= transaction.quantity;
-          item.total_value -= transaction.amount;
-          if (item.quantity <= 0) {
-            inventory = inventory.filter(i => i.category !== transaction.category);
-          }
-        }
-        totalCash += transaction.amount;
-        transactions = transactions.filter(t => t !== transaction);
-      } else if (transaction.type === "Sale") {
-        const item = inventory.find(i => i.category === transaction.category);
-        if (item) {
-          item.quantity += transaction.quantity;
-          item.total_value += transaction.amount;
-        }
-        totalCash -= transaction.amount;
-        transactions = transactions.filter(t => t !== transaction);
-      } else if (transaction.type === "Refund") {
-        const item = inventory.find(i => i.category === transaction.category);
-        if (item) {
-          item.quantity -= transaction.quantity;
-          item.total_value -= transaction.amount;
-          if (item.quantity <= 0) {
-            inventory = inventory.filter(i => i.category !== transaction.category);
-          }
-        }
-        totalCash += transaction.amount;
-        transactions = transactions.filter(t => t !== transaction);
-      } else if (transaction.type === "Expense") {
-        totalCash += transaction.amount;
-        expenses = expenses.filter(e => e.date !== transaction.date || e.amount !== transaction.amount || e.type !== transaction.name);
-      }
-
-      saveToCSV();
-      updateUI();
-    }
-
-    // Save to CSV (mock for local development)
-    function saveToCSV() {
-      console.log("Saving inventory:", inventory);
-      console.log("Saving transactions:", transactions);
-      console.log("Saving expenses:", expenses);
-    }
-
-    // Toggle Menu
-    document.getElementById("menuToggle").addEventListener("click", () => {
-      const menu = document.getElementById("menu");
-      menu.classList.toggle("hidden");
-    });
-
-    // Toggle Transactions
-    document.getElementById("toggleTransactions").addEventListener("click", (e) => {
-      const list = document.getElementById("transactionsList");
-      list.classList.toggle("hidden");
-      e.target.textContent = list.classList.contains("hidden") ? "Show" : "Hide";
-    });
-
-    // Initialize
-    loadData();
-  </script>
-</body>
-</html>
+       // Initialize
+       updateForm();
+       loadData();
+     </script>
+   </body>
+   </html>
