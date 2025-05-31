@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StyleCorner - Clothing Shop Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+  <div class="container mx-auto p-4">
+    <h1 class="text-3xl font-bold text-center mb-6">StyleCorner Management</h1>
+
+    <!-- Partners' Shares -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Partners' Shares</h2>
+      <div id="partners" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
+      <p class="mt-4">Total Available Cash: <span id="totalCash" class="font-bold">0 PKR</span></p>
+    </div>
+
+    <!-- Inventory -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Inventory</h2>
+      <div id="inventory" class="space-y-2"></div>
+    </div>
+
+    <!-- Add Purchase -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Add Purchase</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input id="purchaseCategory" type="text" placeholder="Category (e.g., Male, Female)" class="border p-2 rounded">
+        <input id="purchaseQuantity" type="number" placeholder="Quantity" class="border p-2 rounded">
+        <input id="purchaseAmount" type="number" placeholder="Amount (PKR)" class="border p-2 rounded">
+        <input id="purchaseSupplier" type="text" placeholder="Supplier Name" class="border p-2 rounded">
+        <input id="purchaseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded">
+        <button onclick="addPurchase()" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Purchase</button>
+      </div>
+    </div>
+
+    <!-- Add Sale -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Add Sale</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input id="saleCategory" type="text" placeholder="Category (e.g., Male, Female)" class="border p-2 rounded">
+        <input id="saleQuantity" type="number" placeholder="Quantity" class="border p-2 rounded">
+        <input id="saleAmount" type="number" placeholder="Amount (PKR)" class="border p-2 rounded">
+        <input id="saleCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded">
+        <button onclick="addSale()" class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Add Sale</button>
+      </div>
+    </div>
+
+    <!-- Add Expense -->
+    <div class="bg-white p-4 rounded shadow mb-6">
+      <h2 class="text-xl font-semibold mb-4">Add Expense</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input id="expenseType" type="text" placeholder="Type (e.g., Courier, Marketing)" class="border p-2 rounded">
+        <input id="expenseAmount" type="number" placeholder="Amount (PKR)" class="border p-2 rounded">
+        <input id="expenseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded">
+        <button onclick="addExpense()" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">Add Expense</button>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="bg-white p-4 rounded shadow">
+      <h2 class="text-xl font-semibold mb-4">Transactions</h2>
+      <div id="transactions" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <script>
+    const partners = [
+      { name: "Hafsa", investment: 25000 },
+      { name: "Talha", investment: 25000 },
+      { name: "Sadaf", investment: 25000 },
+      { name: "Atta", investment: 25000 }
+    ];
+    let totalCash = partners.reduce((sum, p) => sum + p.investment, 0);
+    let inventory = [];
+    let transactions = [];
+    let expenses = [];
+
+    // Load data from CSV files (mock for local development)
+    function loadData() {
+      // Mock initial data (replace with actual CSV reading for production)
+      inventory = [
+        { category: "Male", quantity: 0, total_value: 0 },
+        { category: "Female", quantity: 0, total_value: 0 }
+      ];
+      updateUI();
+    }
+
+    // Update UI
+    function updateUI() {
+      // Partners
+      const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
+      const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
+      const partnersHtml = partners.map(p => `
+        <div class="bg-gray-50 p-4 rounded">
+          <p class="font-semibold">${p.name}</p>
+          <p>Investment: ${p.investment} PKR</p>
+          <p>Share: ${((p.investment / totalInvestment) * (profit + totalInvestment)).toFixed(2)} PKR</p>
+        </div>
+      `).join("");
+      document.getElementById("partners").innerHTML = partnersHtml;
+      document.getElementById("totalCash").textContent = `${totalCash.toFixed(2)} PKR`;
+
+      // Inventory
+      const inventoryHtml = inventory.map(item => `
+        <div class="bg-gray-50 p-2 rounded">
+          <p>Category: ${item.category}</p>
+          <p>Quantity: ${item.quantity}</p>
+          <p>Total Value: ${item.total_value.toFixed(2)} PKR</p>
+        </div>
+      `).join("");
+      document.getElementById("inventory").innerHTML = inventoryHtml;
+
+      // Transactions
+      const transactionsHtml = transactions.map(t => `
+        <div class="bg-gray-50 p-2 rounded">
+          <p>Type: ${t.type}</p>
+          <p>Category: ${t.category}</p>
+          <p>Quantity: ${t.quantity}</p>
+          <p>Amount: ${t.amount} PKR</p>
+          <p>Date: ${t.date}</p>
+          <p>Name: ${t.name}</p>
+        </div>
+      `).join("");
+      document.getElementById("transactions").innerHTML = transactionsHtml;
+    }
+
+    // Add Purchase
+    function addPurchase() {
+      const category = document.getElementById("purchaseCategory").value;
+      const quantity = parseInt(document.getElementById("purchaseQuantity").value);
+      const amount = parseFloat(document.getElementById("purchaseAmount").value);
+      const supplier = document.getElementById("purchaseSupplier").value;
+      const receipt = document.getElementById("purchaseReceipt").files[0];
+
+      if (category && quantity > 0 && amount > 0 && supplier) {
+        // Update inventory
+        let item = inventory.find(i => i.category === category);
+        if (!item) {
+          item = { category, quantity: 0, total_value: 0 };
+          inventory.push(item);
+        }
+        item.quantity += quantity;
+        item.total_value += amount;
+
+        // Update transactions
+        transactions.push({
+          type: "Purchase",
+          category,
+          quantity,
+          amount,
+          date: new Date().toISOString().split("T")[0],
+          name: supplier
+        });
+
+        // Update cash
+        totalCash -= amount;
+
+        // Save receipt (mock for local development)
+        console.log("Receipt uploaded:", receipt ? receipt.name : "None");
+
+        // Save to CSV (mock for local development)
+        saveToCSV();
+
+        // Update UI
+        updateUI();
+
+        // Clear inputs
+        document.getElementById("purchaseCategory").value = "";
+        document.getElementById("purchaseQuantity").value = "";
+        document.getElementById("purchaseAmount").value = "";
+        document.getElementById("purchaseSupplier").value = "";
+        document.getElementById("purchaseReceipt").value = "";
+      } else {
+        alert("Please fill all fields correctly.");
+      }
+    }
+
+    // Add Sale
+    function addSale() {
+      const category = document.getElementById("saleCategory").value;
+      const quantity = parseInt(document.getElementById("saleQuantity").value);
+      const amount = parseFloat(document.getElementById("saleAmount").value);
+      const customer = document.getElementById("saleCustomer").value;
+
+      if (category && quantity > 0 && amount > 0 && customer) {
+        // Check inventory
+        const item = inventory.find(i => i.category === category);
+        if (!item || item.quantity < quantity) {
+          alert("Insufficient inventory!");
+          return;
+        }
+
+        // Update inventory
+        item.quantity -= quantity;
+        item.total_value -= (item.total_value / item.quantity) * quantity;
+
+        // Update transactions
+        transactions.push({
+          type: "Sale",
+          category,
+          quantity,
+          amount,
+          date: new Date().toISOString().split("T")[0],
+          name: customer
+        });
+
+        // Update cash
+        totalCash += amount;
+
+        // Save to CSV (mock for local development)
+        saveToCSV();
+
+        // Update UI
+        updateUI();
+
+        // Clear inputs
+        document.getElementById("saleCategory").value = "";
+        document.getElementById("saleQuantity").value = "";
+        document.getElementById("saleAmount").value = "";
+        document.getElementById("saleCustomer").value = "";
+      } else {
+        alert("Please fill all fields correctly.");
+      }
+    }
+
+    // Add Expense
+    function addExpense() {
+      const type = document.getElementById("expenseType").value;
+      const amount = parseFloat(document.getElementById("expenseAmount").value);
+      const receipt = document.getElementById("expenseReceipt").files[0];
+
+      if (type && amount > 0) {
+        // Update expenses
+        expenses.push({
+          type,
+          amount,
+          date: new Date().toISOString().split("T")[0],
+          receipt: receipt ? receipt.name : "None"
+        });
+
+        // Update cash
+        totalCash -= amount;
+
+        // Save to CSV (mock for local development)
+        saveToCSV();
+
+        // Update UI
+        updateUI();
+
+        // Clear inputs
+        document.getElementById("expenseType").value = "";
+        document.getElementById("expenseAmount").value = "";
+        document.getElementById("expenseReceipt").value = "";
+      } else {
+        alert("Please fill all fields correctly.");
+      }
+    }
+
+    // Save to CSV (mock for local development)
+    function saveToCSV() {
+      // Mock saving to CSV
+      console.log("Saving inventory:", inventory);
+      console.log("Saving transactions:", transactions);
+      console.log("Saving expenses:", expenses);
+
+      // For actual CSV saving, use PapaParse to write to files
+      // Example:
+      // Papa.unparse(inventory) for inventory.csv
+      // This requires a server-side solution or FileSystem API (not fully supported in browsers)
+    }
+
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>
