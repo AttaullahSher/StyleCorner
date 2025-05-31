@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>StyleCorner</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jsrsasign/10.5.2/jsrsasign-all-min.js"></script>
 </head>
 <body class="bg-gray-50 font-sans">
   <header class="bg-blue-600 text-white p-3 sticky top-0 z-10 shadow">
@@ -70,10 +69,7 @@
 
   <script>
     const SHEET_ID = "1UfLjgdC5rsVOm4bKar81GHUZy_X8TEFU928JrDPG418";
-    const SERVICE_ACCOUNT = {
-      client_email: "stylecorner-service-account@able-winter-358811.iam.gserviceaccount.com",
-      private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC0KsQoPr2XnOUH\n4g4PM9ui2HChtXM411o3uhGcoXSMHpqqA5B7yqfXaNsUwXuWEF+qa2a0RpT0z61u\n7qJqwEn7iZDNHWp2kwc7JNGzmzhIBP0jwddmpR/2GNI7KKb7vu58wG+k7GXJG04c\nGHURnz/X/HHgEEnTgpa5rBVw6LwzQwtL21T5q6GRaC2tQNfqE5JO9WDRYDKUXLIT\nTQNy8HLftvR027oubSnNVKtlXtWhsiRFNnmaWVtT3gtei79dQf7KYTQxKlxjfId0\nGnwMVc5aTao7pEyrCIfch/cMM+3spD1ZcBE7ZgO/lQvjBElN43bu7jlzH2R7pkBq\nPWlxBuWDAgMBAAECggEASrCkC08fSBg59o+nZnQILLVv1AomDz1v4ERaAsYITAJv\n+eVqY3d7J1kH4c3oTyjQkBTgSgIsxGTIMIHrgTfgM9Au4Gm+dhOz3rf/22aQ6YJv\n8v/sLVhtLJfTp8TNnPXlZoBciFGcTMfuFMWq2rhbPk4gY1Q9Vtr/Y0/Mv7csNk91\nxrZ/YsrZaTaUAQAzcSlpYuFlo1jpiE1eft49qub0LbBulU9Ciwt1ertHij+sYVDG\n4UeA2B8m3QRAGrLpAYy58s6xG//I3hxxks8dfn1hasakH1km5RtsYyw4mS4/GCx1\ngj7tkSONIwjGNNLSqyic441r/aN82oKRuyJj4/AjCQKBgQDgRHKCsS9XnSAC/v6D\nwqB29g+MIXFPiFtdnh+iGIPezRzxyFSbaIJVqTFrAA4r7ssG+Po4rP3iBBlP69Tk\nk4Bt6jQ43XT326LLAOBa8dq6hyUJFIJBALfZq7/Ye21MgqGRy80RQa2wAvjGef0N\nWN0BcaIl6AU2WvV4JaxoSYTjfwKBgQDNqOPGVSp9fqbGqi/H9AhMLmxVCJf+Y5Qw\n4rKP9KCBTAaopPQfAXyBS/WgDrX6JfWh91NY1eoG7iQO/Q4qlTzTkCnHZJ96Kmxo\n6GYZ7V30D2MFjyU6Y5ilFTJBssFB0Z/eZl54x9+154CkX8GY5p//iXfWuHUrLbCL\nYeXE5PJv/QKBgQC7haA2VY+fc9uDhdItPD1Om1rOslv7w6mZ8xDCSjthviJ4rSjJ\nta5dkBapQKeY5pfPIbqgT04OgZzkre4anpdh0NaPweT/JyDNG9N9WAOrujsmh4aO\ncdpI4QqOKk5vDj+pGD9FMaTYqvN3iiMk2OwbO/f4ODS7iXz9VIr/vJGoYwKBgBTd\ncqZ3k4UB6Xe0Yn6d0o2wFAuYgJstjSZciZMzVWloxjAr9ByFMRWJGFVxyKKlYUNa\nbVlQ8ppbZMskf2Bwnag1MxforIlfbnpCQcGVpHeTbA9vU26WFjGBcgTaVuMPmnGc\n3y7P0HGLGDEVCfYyR79MOh1Nv41u6D9r4jzUoYgdAoGBAK1YfVqWhytEbhoI7jH/\nTssllH/6jNqKWDgs1KgjqdboBaqKJSXP8Ycc8YTxXRUX3oh4SfaWgS5xMOxA8Lo9\n0U0K/v+ZAgW10gNu7xO2d5FRG+cPY21AJex0l6U5ABGUJCOaJ0QH30fWfcB5+Epv\nS+C4eQNceWZ7tbFds7cCaIZw\n-----END PRIVATE KEY-----\n"
-    };
+    const API_KEY = "AIzaSyCGwzmW2Ylzq4jHJmawcEOUxiv7WQSKGKI";
     const partners = [
       { name: "Hafsa", investment: 25000 },
       { name: "Talha", investment: 25000 },
@@ -86,44 +82,27 @@
     let transactions = [];
     let expenses = [];
 
-    // Generate JWT Token
-    async function getAccessToken() {
-      const header = { alg: "RS256", typ: "JWT" };
-      const now = Math.floor(Date.now() / 1000);
-      const payload = {
-        iss: SERVICE_ACCOUNT.client_email,
-        scope: "https://www.googleapis.com/auth/spreadsheets",
-        aud: "https://oauth2.googleapis.com/token",
-        exp: now + 3600,
-        iat: now
-      };
-      const sHeader = JSON.stringify(header);
-      const sPayload = JSON.stringify(payload);
-      const key = KEYUTIL.getKey(SERVICE_ACCOUNT.private_key);
-      const jwt = KJUR.jws.JWS.sign("RS256", sHeader, sPayload, key);
-      const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", {
-        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion: jwt
-      });
-      return tokenResponse.data.access_token;
-    }
-
     // Toggle Section
     function toggleSection(id) {
       const el = document.getElementById(id);
-      el.classList.toggle("hidden");
-      el.previousElementSibling.querySelector("i.fa-chevron-down").classList.toggle("fa-chevron-up");
+      if (el.classList.contains("hidden")) {
+        el.classList.remove("hidden");
+        el.previousElementSibling.querySelector("i.fa-chevron-down").classList.add("fa-chevron-up");
+        el.previousElementSibling.querySelector("i.fa-chevron-down").classList.remove("fa-chevron-down");
+      } else {
+        el.classList.add("hidden");
+        el.previousElementSibling.querySelector("i.fa-chevron-up").classList.add("fa-chevron-down");
+        el.previousElementSibling.querySelector("i.fa-chevron-up").classList.remove("fa-chevron-up");
+      }
     }
 
     // Load Data from Google Sheets
     async function loadData() {
       try {
-        const accessToken = await getAccessToken();
-        const headers = { Authorization: `Bearer ${accessToken}` };
         const [invRes, transRes, expRes] = await Promise.all([
-          axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory`, { headers }),
-          axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions`, { headers }),
-          axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses`, { headers }),
+          axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory?key=${API_KEY}`),
+          axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions?key=${API_KEY}`),
+          axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses?key=${API_KEY}`),
         ]);
         inventory = invRes.data.values?.slice(1).map(row => ({
           category: row[0],
@@ -157,26 +136,21 @@
       }
     }
 
-    // Save Data to Google Sheets
+    // Save Data to Server Proxy
     async function saveToSheets() {
       try {
-        const accessToken = await getAccessToken();
-        const headers = { Authorization: `Bearer ${accessToken}` };
         const invData = [["category", "quantity", "total_value"], ...inventory.map(i => [i.category, i.quantity.toString(), i.total_value.toString()])];
         const transData = [["type", "category", "quantity", "amount", "date", "name"], ...transactions.map(t => [t.type, t.category, t.quantity.toString(), t.amount.toString(), t.date, t.name])];
         const expData = [["type", "amount", "date", "receipt"], ...expenses.map(e => [e.type, e.amount.toString(), e.date, e.receipt])];
         await Promise.all([
-          axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory:clear`, {}, { headers }),
-          axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions:clear`, {}, { headers }),
-          axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses:clear`, {}, { headers }),
-          axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory?valueInputOption=RAW`, { values: invData }, { headers }),
-          axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions?valueInputOption=RAW`, { values: transData }, { headers }),
-          axios.post(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses?valueInputOption=RAW`, { values: expData }, { headers }),
+          axios.post("http://localhost:3000/save", { sheet: "Inventory", data: invData }),
+          axios.post("http://localhost:3000/save", { sheet: "Transactions", data: transData }),
+          axios.post("http://localhost:3000/save", { sheet: "Expenses", data: expData }),
         ]);
         localStorage.setItem("totalCash", totalCash.toString());
       } catch (err) {
         console.error("Error saving data:", err);
-        alert("Failed to save data to Google Sheets.");
+        alert("Failed to save data. Ensure the server is running on port 3000.");
       }
     }
 
