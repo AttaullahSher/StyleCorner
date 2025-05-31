@@ -155,6 +155,7 @@
       { name: "Waseem", investment: 25000 },
       { name: "Atta", investment: 25000 }
     ];
+    const PASSWORD = "2532";
     let totalCash = partners.reduce((sum, p) => sum + p.investment, 0);
     let inventory = [];
     let transactions = [];
@@ -197,15 +198,31 @@
       document.getElementById("inventory").innerHTML = inventoryHtml;
 
       // Transactions (sorted by date descending)
-      transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-      const transactionsHtml = transactions.map(t => `
-        <div class="bg-blue-50 p-4 rounded-lg shadow">
-          <p class="font-medium text-blue-800">Type: ${t.type}</p>
-          <p>Category: ${t.category}</p>
-          <p>Quantity: ${t.quantity}</p>
-          <p>Amount: ${t.amount.toFixed(2)} PKR</p>
-          <p>Date: ${t.date}</p>
-          <p>Name: ${t.name}</p>
+      const allTransactions = [
+        ...transactions,
+        ...expenses.map(e => ({
+          type: "Expense",
+          category: "",
+          quantity: "",
+          amount: e.amount,
+          date: e.date,
+          name: e.type,
+          receipt: e.receipt
+        }))
+      ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      const transactionsHtml = allTransactions.map((t, index) => `
+        <div class="bg-blue-50 p-4 rounded-lg shadow flex justify-between items-center">
+          <div>
+            <p class="font-medium text-blue-800">Type: ${t.type}</p>
+            ${t.category ? `<p>Category: ${t.category}</p>` : ""}
+            ${t.quantity ? `<p>Quantity: ${t.quantity}</p>` : ""}
+            <p>Amount: ${t.amount.toFixed(2)} PKR</p>
+            <p>Date: ${t.date}</p>
+            <p>Name: ${t.name}</p>
+            ${t.receipt ? `<p>Receipt: ${t.receipt}</p>` : ""}
+          </div>
+          <button onclick="deleteTransaction(${index})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">Delete</button>
         </div>
       `).join("");
       document.getElementById("transactions").innerHTML = transactionsHtml;
@@ -234,7 +251,8 @@
           quantity,
           amount,
           date: new Date().toISOString().split("T")[0],
-          name: supplier
+          name: supplier,
+          receipt: receipt ? receipt.name : "None"
         });
 
         totalCash -= amount;
@@ -353,6 +371,68 @@
       } else {
         alert("Please fill all fields correctly.");
       }
+    }
+
+    // Delete Transaction
+    function deleteTransaction(index) {
+      const password = prompt("Enter password to delete transaction:");
+      if (password !== PASSWORD) {
+        alert("Incorrect password!");
+        return;
+      }
+
+      const allTransactions = [
+        ...transactions,
+        ...expenses.map(e => ({
+          type: "Expense",
+          category: "",
+          quantity: "",
+          amount: e.amount,
+          date: e.date,
+          name: e.type,
+          receipt: e.receipt
+        }))
+      ].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+      const transaction = allTransactions[index];
+
+      if (transaction.type === "Purchase") {
+        const item = inventory.find(i => i.category === transaction.category);
+        if (item) {
+          item.quantity -= transaction.quantity;
+          item.total_value -= transaction.amount;
+          if (item.quantity <= 0) {
+            inventory = inventory.filter(i => i.category !== transaction.category);
+          }
+        }
+        totalCash += transaction.amount;
+        transactions = transactions.filter(t => t !== transaction);
+      } else if (transaction.type === "Sale") {
+        const item = inventory.find(i => i.category === transaction.category);
+        if (item) {
+          item.quantity += transaction.quantity;
+          item.total_value += transaction.amount;
+        }
+        totalCash -= transaction.amount;
+        transactions = transactions.filter(t => t !== transaction);
+      } else if (transaction.type === "Refund") {
+        const item = inventory.find(i => i.category === transaction.category);
+        if (item) {
+          item.quantity -= transaction.quantity;
+          item.total_value -= transaction.amount;
+          if (item.quantity <= 0) {
+            inventory = inventory.filter(i => i.category !== transaction.category);
+          }
+        }
+        totalCash += transaction.amount;
+        transactions = transactions.filter(t => t !== transaction);
+      } else if (transaction.type === "Expense") {
+        totalCash += transaction.amount;
+        expenses = expenses.filter(e => e.date !== transaction.date || e.amount !== transaction.amount || e.type !== transaction.name);
+      }
+
+      saveToCSV();
+      updateUI();
     }
 
     // Save to CSV (mock for local development)
