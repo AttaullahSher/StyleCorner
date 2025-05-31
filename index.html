@@ -7,62 +7,113 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <style>
+    #partners, #inventory, #record, #transactions {
+      border: 1px solid #e5e7eb;
+      border-radius: 0.5rem;
+      padding: 1rem;
+    }
+    #partnersList i,
+    #inventoryList i {
+      display: none;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 font-sans">
-  <header class="bg-blue-600 text-white p-3 sticky top-0 z-10 shadow">
-    <div class="flex justify-between items-center max-w-5xl mx-auto">
-      <h1 class="text-lg font-bold flex items-center"><i class="fas fa-tshirt mr-2"></i> StyleCorner</h1>
-      <button id="menuToggle" class="text-2xl"><i class="fas fa-bars"></i></button>
+<body class="bg-gray-50 font-sans text-gray-800">
+  <div id="loading" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center hidden">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+  <div id="notification" class="fixed bottom-4 right-4 bg-red-500 text-white p-3 rounded-lg hidden"></div>
+
+  <header class="bg-blue-600 text-white p-4 sticky top-0 z-10 shadow-lg">
+    <div class="flex justify-center items-center max-w-5xl mx-auto">
+      <h1 class="text-xl font-bold flex items-center"><i class="fas fa-tshirt mr-3"></i> StyleCorner</h1>
     </div>
   </header>
-  <nav id="menu" class="hidden bg-white p-3 shadow max-w-5xl mx-auto">
-    <a href="#partners" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-users mr-2"></i> Partners</a>
-    <a href="#inventory" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-box mr-2"></i> Inventory</a>
-    <a href="#record" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-plus mr-2"></i> Record</a>
-    <a href="#transactions" class="block text-blue-600 hover:bg-blue-50 p-2 rounded"><i class="fas fa-list mr-2"></i> Transactions</a>
-  </nav>
-  <div class="container mx-auto p-3 max-w-5xl">
+
+  <div class="container mx-auto p-4 max-w-5xl">
     <!-- Partners' Shares -->
-    <div id="partners" class="mb-4">
-      <h2 class="text-lg font-semibold text-blue-800 flex justify-between items-center cursor-pointer" onclick="toggleSection('partnersList')">
-        <span><i class="fas fa-users mr-2"></i> Partners' Shares</span>
-        <i class="fas fa-chevron-down"></i>
+    <div id="partners" class="mb-6 bg-white">
+      <h2 class="text-lg font-semibold text-blue-800 flex items-center mb-3">
+        <i class="fas fa-users mr-2"></i> Partners' Shares
       </h2>
-      <div id="partnersList" class="hidden grid grid-cols-1 gap-3 mt-2"></div>
-      <p class="mt-2 text-blue-800 text-sm"><i class="fas fa-coins mr-2"></i> Total Cash: <span id="totalCash" class="font-bold">0 PKR</span></p>
+      <div id="partnersList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+          <div class="text-center">
+            <p class="font-semibold text-blue-800 text-sm">Aqil</p>
+            <p class="text-sm">Investment: 25,000 PKR</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="aqilShare">0 PKR</p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+          <div class="text-center">
+            <p class="font-semibold text-blue-800 text-sm">Talha</p>
+            <p class="text-sm">Investment: 25,000 PKR</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="talhaShare">0 PKR</p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+          <div class="text-center">
+            <p class="font-semibold text-blue-800 text-sm">Atta</p>
+            <p class="text-sm">Investment: 25,000 PKR</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="attaShare">0 PKR</p>
+          </div>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+          <div class="text-center">
+            <p class="font-semibold text-blue-800 text-sm">Waseem</p>
+            <p class="text-sm">Investment: 25,000 PKR</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="waseemShare">0 PKR</p>
+          </div>
+        </div>
+      </div>
+      <p class="mt-4 text-blue-800 text-sm flex items-center">
+        <i class="fas fa-coins mr-2"></i> Total Cash: 
+        <span id="totalCash" class="font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded-full ml-1">0 PKR</span>
+      </p>
     </div>
 
     <!-- Inventory -->
-    <div id="inventory" class="mb-4">
-      <h2 class="text-lg font-semibold text-blue-800 mb-2"><i class="fas fa-box mr-2"></i> Inventory</h2>
-      <div id="inventoryList" class="grid grid-cols-2 gap-2 sm:grid-cols-4"></div>
+    <div id="inventory" class="mb-6 bg-white">
+      <h2 class="text-lg font-semibold text-blue-800 flex items-center mb-3">
+        <i class="fas fa-box mr-2"></i> Inventory
+      </h2>
+      <div id="inventoryList" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
     </div>
 
     <!-- Record Transaction -->
-    <div id="record" class="mb-4">
-      <h2 class="text-lg font-semibold text-blue-800 mb-2"><i class="fas fa-plus mr-2"></i> Record Transaction</h2>
-      <div class="bg-white p-4 rounded-lg shadow">
-        <select id="transactionType" class="border p-2 rounded w-full text-sm mb-3" onchange="updateForm()">
+    <div id="record" class="mb-6 bg-white">
+      <h2 class="text-lg font-semibold text-blue-800 flex items-center mb-3">
+        <i class="fas fa-plus mr-2"></i> Record Transaction
+      </h2>
+      <div class="p-5 rounded-lg shadow-md">
+        <select id="transactionType" class="border p-2 rounded w-full text-sm mb-4" onchange="updateForm()">
           <option value="purchase">Purchase</option>
           <option value="sale">Sale</option>
           <option value="refund">Refund</option>
           <option value="expense">Expense</option>
         </select>
-        <div id="transactionForm" class="grid grid-cols-1 gap-2"></div>
+        <div id="transactionForm" class="grid grid-cols-1 gap-4"></div>
       </div>
     </div>
 
     <!-- Transactions -->
-    <div id="transactions">
-      <h2 class="text-lg font-semibold text-blue-800 mb-2 flex justify-between items-center">
+    <div id="transactions" class="bg-white">
+      <h2 class="text-lg font-semibold text-blue-800 flex items-center mb-3">
         <span><i class="fas fa-list mr-2"></i> Transactions</span>
-        <button id="toggleTransactions" class="text-blue-600 text-sm">Hide</button>
+        <button id="toggleTransactions" class="text-blue-600 text-sm hover:text-blue-800 transition-colors ml-2">Hide</button>
       </h2>
-      <div id="transactionsList" class="space-y-2"></div>
-      <div class="mt-3 flex flex-wrap gap-2">
-        <button onclick="exportCSV('inventory')" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 text-sm"><i class="fas fa-download mr-1"></i> Export Inventory</button>
-        <button onclick="exportCSV('transactions')" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 text-sm"><i class="fas fa-download mr-1"></i> Export Transactions</button>
-        <button onclick="exportCSV('expenses')" class="bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600 text-sm"><i class="fas fa-download mr-1"></i> Export Expenses</button>
+      <div id="transactionsList" class="space-y-3"></div>
+      <div class="mt-4 flex flex-wrap gap-3">
+        <button onclick="exportCSV('inventory')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center">
+          <i class="fas fa-download mr-2"></i> Export Inventory
+        </button>
+        <button onclick="exportCSV('transactions')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center">
+          <i class="fas fa-download mr-2"></i> Export Transactions
+        </button>
+        <button onclick="exportCSV('expenses')" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm flex items-center">
+          <i class="fas fa-download mr-2"></i> Export Expenses
+        </button>
       </div>
     </div>
   </div>
@@ -71,33 +122,19 @@
     const SHEET_ID = "1UfLjgdC5rsVOm4bKar81GHUZy_X8TEFU928JrDPG418";
     const API_KEY = "AIzaSyCGwzmW2Ylzq4jHJmawcEOUxiv7WQSKGKI";
     const partners = [
-      { name: "Hafsa", investment: 25000 },
+      { name: "Aqil", investment: 25000 },
       { name: "Talha", investment: 25000 },
-      { name: "Waseem", investment: 25000 },
-      { name: "Atta", investment: 25000 }
+      { name: "Atta", investment: 25000 },
+      { name: "Waseem", investment: 25000 }
     ];
     const PASSWORD = "2532";
-    let totalCash = partners.reduce((sum, p) => sum + p.investment, 0);
+    let totalCash = 100000; // Initial cash in hand
     let inventory = [];
     let transactions = [];
     let expenses = [];
 
-    // Toggle Section
-    function toggleSection(id) {
-      const el = document.getElementById(id);
-      if (el.classList.contains("hidden")) {
-        el.classList.remove("hidden");
-        el.previousElementSibling.querySelector("i.fa-chevron-down").classList.add("fa-chevron-up");
-        el.previousElementSibling.querySelector("i.fa-chevron-down").classList.remove("fa-chevron-down");
-      } else {
-        el.classList.add("hidden");
-        el.previousElementSibling.querySelector("i.fa-chevron-up").classList.add("fa-chevron-down");
-        el.previousElementSibling.querySelector("i.fa-chevron-up").classList.remove("fa-chevron-up");
-      }
-    }
-
-    // Load Data from Google Sheets
     async function loadData() {
+      document.getElementById("loading").classList.remove("hidden");
       try {
         const [invRes, transRes, expRes] = await Promise.all([
           axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory?key=${API_KEY}`),
@@ -128,15 +165,22 @@
           date: row[2],
           receipt: row[3] || "None"
         })) || [];
-        totalCash = parseFloat(localStorage.getItem("totalCash")) || partners.reduce((sum, p) => sum + p.investment, 0);
+        // Update totalCash if data exists, otherwise use initial 100,000
+        const savedCash = parseFloat(localStorage.getItem("totalCash")) || expRes.data.values?.[0]?.[3];
+        if (savedCash) totalCash = savedCash;
         updateUI();
       } catch (err) {
-        console.error("Error loading data:", err);
-        alert("Failed to load data from Google Sheets.");
+        document.getElementById("notification").textContent = "Failed to load data from Google Sheets. Check API key and sharing settings.";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        console.error("Error loading data:", err.response ? err.response.data : err.message);
+        // Fallback to initial cash if load fails
+        updateUI();
+      } finally {
+        document.getElementById("loading").classList.add("hidden");
       }
     }
 
-    // Save Data to Server Proxy
     async function saveToSheets() {
       try {
         const invData = [["category", "quantity", "total_value"], ...inventory.map(i => [i.category, i.quantity.toString(), i.total_value.toString()])];
@@ -149,34 +193,28 @@
         ]);
         localStorage.setItem("totalCash", totalCash.toString());
       } catch (err) {
+        document.getElementById("notification").textContent = "Failed to save data. Ensure the server is running on port 3000.";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
         console.error("Error saving data:", err);
-        alert("Failed to save data. Ensure the server is running on port 3000.");
       }
     }
 
-    // Update UI
     function updateUI() {
       const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
       const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
-      document.getElementById("partnersList").innerHTML = partners.map(p => `
-        <div class="bg-white p-3 rounded-lg shadow flex items-center">
-          <i class="fas fa-user text-blue-600 mr-2"></i>
-          <div>
-            <p class="font-semibold text-blue-800 text-sm">${p.name}</p>
-            <p class="text-sm">${p.investment.toFixed(2)} PKR</p>
-            <p class="text-sm font-bold">${((p.investment / totalInvestment) * (profit + totalInvestment)).toFixed(2)} PKR</p>
-          </div>
-        </div>
-      `).join("");
+      document.getElementById("aqilShare").textContent = ((partners[0].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
+      document.getElementById("talhaShare").textContent = ((partners[1].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
+      document.getElementById("attaShare").textContent = ((partners[2].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
+      document.getElementById("waseemShare").textContent = ((partners[3].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
       document.getElementById("totalCash").textContent = `${totalCash.toFixed(2)} PKR`;
 
       document.getElementById("inventoryList").innerHTML = inventory.map(item => `
-        <div class="bg-white p-3 rounded-lg shadow flex items-center">
-          <i class="fas fa-tshirt text-blue-600 mr-2"></i>
-          <div>
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
+          <div class="text-center">
             <p class="font-medium text-blue-800 text-sm">${item.category}</p>
-            <p class="text-sm">${item.quantity}pcs</p>
-            <p class="text-sm">${item.total_value.toFixed(0)}</p>
+            <p class="text-sm">${item.quantity} pcs</p>
+            <p class="text-sm">${item.total_value.toFixed(0)} PKR</p>
           </div>
         </div>
       `).join("");
@@ -191,20 +229,22 @@
         receipt: e.receipt
       }))].sort((a, b) => new Date(b.date) - new Date(a.date));
       document.getElementById("transactionsList").innerHTML = allTransactions.map((t, index) => `
-        <div class="bg-white p-3 rounded-lg shadow flex justify-between items-center">
+        <div class="bg-white p-3 rounded-lg shadow-md flex justify-between items-center hover:shadow-lg transition-shadow duration-200">
           <div class="text-sm">
             <p class="font-medium ${t.type === 'Purchase' ? 'text-blue-600' : t.type === 'Sale' ? 'text-green-600' : t.type === 'Refund' ? 'text-yellow-600' : 'text-red-600'}">
               <i class="fas ${t.type === 'Purchase' ? 'fa-shopping-cart' : t.type === 'Sale' ? 'fa-money-bill' : t.type === 'Refund' ? 'fa-undo' : 'fa-wallet'} mr-2"></i>
               ${t.type}
             </p>
             ${t.category ? `<p>${t.category}</p>` : ""}
-            ${t.quantity ? `<p>${t.quantity}pcs</p>` : ""}
+            ${t.quantity ? `<p>${t.quantity} pcs</p>` : ""}
             <p>${t.amount.toFixed(2)} PKR</p>
             <p>${t.date}</p>
             <p>${t.name}</p>
             ${t.receipt !== "None" ? `<p>${t.receipt}</p>` : ""}
           </div>
-          <button onclick="deleteTransaction(${index})" class="text-red-600 hover:text-red-800"><i class="fas fa-trash"></i></button>
+          <button onclick="deleteTransaction(${index})" class="text-red-600 hover:text-red-800 transition-colors">
+            <i class="fas fa-trash"></i>
+          </button>
         </div>
       `).join("");
     }
@@ -256,7 +296,9 @@
             <input id="receipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full text-sm">
           </div>
         ` : ""}
-        <button onclick="addTransaction()" class="bg-${type === 'purchase' ? 'blue' : type === 'sale' ? 'green' : type === 'refund' ? 'yellow' : 'red'}-500 text-white p-2 rounded hover:bg-${type === 'purchase' ? 'blue' : type === 'sale' ? 'green' : type === 'refund' ? 'yellow' : 'red'}-600 text-sm"><i class="fas fa-plus mr-1"></i> Add ${type.charAt(0).toUpperCase() + type.slice(1)}</button>
+        <button onclick="addTransaction()" class="bg-${type === 'purchase' ? 'blue' : type === 'sale' ? 'green' : type === 'refund' ? 'yellow' : 'red'}-500 text-white p-2 rounded-lg hover:bg-${type === 'purchase' ? 'blue' : type === 'sale' ? 'green' : type === 'refund' ? 'yellow' : 'red'}-600 transition-colors text-sm flex items-center">
+          <i class="fas fa-plus mr-2"></i> Add ${type.charAt(0).toUpperCase() + type.slice(1)}
+        </button>
       `;
     }
 
@@ -271,7 +313,9 @@
 
       if ((type !== "expense" && category && quantity > 0 && amount > 0 && name) || (type === "expense" && expenseType && amount > 0)) {
         if (type === "sale" && (!inventory.find(i => i.category === category) || inventory.find(i => i.category === category).quantity < quantity)) {
-          alert("Insufficient inventory!");
+          document.getElementById("notification").textContent = "Insufficient inventory!";
+          document.getElementById("notification").classList.remove("hidden");
+          setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
           return;
         }
 
@@ -304,14 +348,18 @@
         updateUI();
         document.getElementById("transactionForm").querySelectorAll("input, select").forEach(el => el.value = "");
       } else {
-        alert("Please fill all fields correctly.");
+        document.getElementById("notification").textContent = "Please fill all fields correctly.";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
       }
     }
 
     async function deleteTransaction(index) {
       const password = prompt("Enter password to delete:");
       if (password !== PASSWORD) {
-        alert("Incorrect password!");
+        document.getElementById("notification").textContent = "Incorrect password!";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
         return;
       }
 
@@ -390,10 +438,6 @@
       const list = document.getElementById("transactionsList");
       list.classList.toggle("hidden");
       e.target.textContent = list.classList.contains("hidden") ? "Show" : "Hide";
-    });
-
-    document.getElementById("menuToggle").addEventListener("click", () => {
-      document.getElementById("menu").classList.toggle("hidden");
     });
 
     updateForm();
