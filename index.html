@@ -3,148 +3,176 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StyleCorner - Clothing Shop Management</title>
+  <title>StyleCorner - Mobile</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-<body class="bg-blue-50 font-sans">
-  <header class="bg-blue-600 text-white p-4">
-    <h1 class="text-2xl font-bold text-center">StyleCorner</h1>
+<body class="bg-gray-100 font-sans">
+  <header class="bg-blue-700 text-white p-3 sticky top-0 z-10 shadow-md">
+    <div class="flex justify-between items-center max-w-4xl mx-auto">
+      <h1 class="text-lg font-bold flex items-center">
+        <i class="fas fa-tshirt mr-2"></i> StyleCorner
+      </h1>
+      <button id="menuToggle" class="text-2xl"><i class="fas fa-bars"></i></button>
+    </div>
   </header>
-  <div class="container mx-auto p-4 max-w-4xl">
+  <div id="menu" class="hidden max-w-4xl mx-auto bg-white p-3 shadow-md">
+    <nav class="flex flex-col space-y-2">
+      <a href="#partners" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-users mr-2"></i> Partners</a>
+      <a href="#inventory" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-box mr-2"></i> Inventory</a>
+      <a href="#purchase" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-shopping-cart mr-2"></i> Add Purchase</a>
+      <a href="#sale" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-money-bill mr-2"></i> Add Sale</a>
+      <a href="#refund" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-undo mr-2"></i> Add Refund</a>
+      <a href="#expense" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-wallet mr-2"></i> Add Expense</a>
+      <a href="#transactions" class="text-blue-700 hover:bg-blue-50 p-2 rounded flex items-center"><i class="fas fa-list mr-2"></i> Transactions</a>
+    </nav>
+  </div>
+  <div class="container mx-auto p-3 max-w-4xl">
     <!-- Partners' Shares -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-blue-800">Partners' Shares</h2>
-      <div id="partners" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
-      <p class="mt-4 text-blue-800">Total Available Cash: <span id="totalCash" class="font-bold">0 PKR</span></p>
+    <div id="partners" class="mb-4">
+      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-users mr-2"></i> Partners' Shares</h2>
+      <div class="grid grid-cols-1 gap-3" id="partnersList"></div>
+      <p class="mt-3 text-blue-800 text-sm flex items-center"><i class="fas fa-coins mr-2"></i> Total Cash: <span id="totalCash" class="font-bold ml-1">0 PKR</span></p>
     </div>
 
     <!-- Inventory -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-blue-800">Inventory</h2>
-      <div id="inventory" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+    <div id="inventory" class="mb-4">
+      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-box mr-2"></i> Inventory</h2>
+      <div class="grid grid-cols-1 gap-3" id="inventoryList"></div>
     </div>
 
     <!-- Add Purchase -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Purchase</h2>
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Category</label>
-          <select id="purchaseCategory" class="border p-2 rounded w-full">
-            <option value="Male Unstitched">Male Unstitched</option>
-            <option value="Female Unstitched">Female Unstitched</option>
-            <option value="Male Stitched">Male Stitched</option>
-            <option value="Female Stitched">Female Stitched</option>
-          </select>
+    <div id="purchase" class="mb-4">
+      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-shopping-cart mr-2"></i> Add Purchase</h2>
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Category</label>
+            <select id="purchaseCategory" class="border p-2 rounded w-full text-sm">
+              <option value="Male Unstitched">Male Unstitched</option>
+              <option value="Female Unstitched">Female Unstitched</option>
+              <option value="Male Stitched">Male Stitched</option>
+              <option value="Female Stitched">Female Stitched</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Quantity</label>
+            <input id="purchaseQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full text-sm" min="1">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
+            <input id="purchaseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Supplier Name</label>
+            <input id="purchaseSupplier" type="text" placeholder="Supplier Name" class="border p-2 rounded w-full text-sm">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Receipt (Optional)</label>
+            <input id="purchaseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full text-sm">
+          </div>
+          <button onclick="addPurchase()" class="bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Purchase</button>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Quantity</label>
-          <input id="purchaseQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full" min="1">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
-          <input id="purchaseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Supplier Name</label>
-          <input id="purchaseSupplier" type="text" placeholder="Supplier Name" class="border p-2 rounded w-full">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Receipt (Optional)</label>
-          <input id="purchaseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full">
-        </div>
-        <button onclick="addPurchase()" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">Add Purchase</button>
       </div>
     </div>
 
     <!-- Add Sale -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Sale</h2>
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Category</label>
-          <select id="saleCategory" class="border p-2 rounded w-full">
-            <option value="Male Unstitched">Male Unstitched</option>
-            <option value="Female Unstitched">Female Unstitched</option>
-            <option value="Male Stitched">Male Stitched</option>
-            <option value="Female Stitched">Female Stitched</option>
-          </select>
+    <div id="sale" class="mb-4">
+      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-money-bill mr-2"></i> Add Sale</h2>
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Category</label>
+            <select id="saleCategory" class="border p-2 rounded w-full text-sm">
+              <option value="Male Unstitched">Male Unstitched</option>
+              <option value="Female Unstitched">Female Unstitched</option>
+              <option value="Male Stitched">Male Stitched</option>
+              <option value="Female Stitched">Female Stitched</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Quantity</label>
+            <input id="saleQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full text-sm" min="1">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
+            <input id="saleAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Customer Name</label>
+            <input id="saleCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full text-sm">
+          </div>
+          <button onclick="addSale()" class="bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Sale</button>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Quantity</label>
-          <input id="saleQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full" min="1">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
-          <input id="saleAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Customer Name</label>
-          <input id="saleCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full">
-        </div>
-        <button onclick="addSale()" class="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition">Add Sale</button>
       </div>
     </div>
 
     <!-- Add Refund -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Refund</h2>
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Category</label>
-          <select id="refundCategory" class="border p-2 rounded w-full">
-            <option value="Male Unstitched">Male Unstitched</option>
-            <option value="Female Unstitched">Female Unstitched</option>
-            <option value="Male Stitched">Male Stitched</option>
-            <option value="Female Stitched">Female Stitched</option>
-          </select>
+    <div id="refund" class="mb-4">
+      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-undo mr-2"></i> Add Refund</h2>
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Category</label>
+            <select id="refundCategory" class="border p-2 rounded w-full text-sm">
+              <option value="Male Unstitched">Male Unstitched</option>
+              <option value="Female Unstitched">Female Unstitched</option>
+              <option value="Male Stitched">Male Stitched</option>
+              <option value="Female Stitched">Female Stitched</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Quantity</label>
+            <input id="refundQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full text-sm" min="1">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
+            <input id="refundAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Customer Name</label>
+            <input id="refundCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full text-sm">
+          </div>
+          <button onclick="addRefund()" class="bg-yellow-500 text-white p-3 rounded-lg hover:bg-yellow-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Refund</button>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Quantity</label>
-          <input id="refundQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full" min="1">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
-          <input id="refundAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Customer Name</label>
-          <input id="refundCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full">
-        </div>
-        <button onclick="addRefund()" class="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition">Add Refund</button>
       </div>
     </div>
 
     <!-- Add Expense -->
-    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
-      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Expense</h2>
-      <div class="grid grid-cols-1 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Type</label>
-          <select id="expenseType" class="border p-2 rounded w-full">
-            <option value="Stitching">Stitching</option>
-            <option value="Courier">Courier</option>
-            <option value="Marketing">Marketing</option>
-            <option value="Other">Other</option>
-          </select>
+    <div id="expense" class="mb-4">
+      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex items-center"><i class="fas fa-wallet mr-2"></i> Add Expense</h2>
+      <div class="bg-white p-4 rounded-lg shadow-md">
+        <div class="grid grid-cols-1 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Type</label>
+            <select id="expenseType" class="border p-2 rounded w-full text-sm">
+              <option value="Stitching">Stitching</option>
+              <option value="Courier">Courier</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
+            <input id="expenseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm" min="0" step="0.01">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-700">Receipt (Optional)</label>
+            <input id="expenseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full text-sm">
+          </div>
+          <button onclick="addExpense()" class="bg-red-500 text-white p-3 rounded-lg hover:bg-red-600 transition text-sm flex items-center justify-center"><i class="fas fa-plus mr-2"></i> Add Expense</button>
         </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
-          <input id="expenseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700">Receipt (Optional)</label>
-          <input id="expenseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full">
-        </div>
-        <button onclick="addExpense()" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition">Add Expense</button>
       </div>
     </div>
 
     <!-- Transactions -->
-    <div class="bg-white p-6 rounded-lg shadow-lg">
-      <h2 class="text-xl font-semibold mb-4 text-blue-800">Transactions</h2>
-      <div id="transactions" class="space-y-4"></div>
+    <div id="transactions">
+      <h2 class="text-lg font-semibold mb-3 text-blue-800 flex justify-between items-center">
+        <span><i class="fas fa-list mr-2"></i> Transactions</span>
+        <button id="toggleTransactions" class="text-blue-700 text-sm">Hide</button>
+      </h2>
+      <div id="transactionsList" class="space-y-3"></div>
     </div>
   </div>
 
@@ -178,24 +206,30 @@
       const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
       const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
       const partnersHtml = partners.map(p => `
-        <div class="bg-blue-50 p-4 rounded-lg shadow">
-          <p class="font-semibold text-blue-800">${p.name}</p>
-          <p>Investment: ${p.investment.toFixed(2)} PKR</p>
-          <p>Share: ${((p.investment / totalInvestment) * (profit + totalInvestment)).toFixed(2)} PKR</p>
+        <div class="bg-white p-3 rounded-lg shadow-md flex items-center">
+          <i class="fas fa-user text-blue-700 mr-2"></i>
+          <div>
+            <p class="font-semibold text-blue-800 text-sm">${p.name}</p>
+            <p class="text-sm">Investment: ${p.investment.toFixed(2)} PKR</p>
+            <p class="text-sm font-bold">Share: ${((p.investment / totalInvestment) * (profit + totalInvestment)).toFixed(2)} PKR</p>
+          </div>
         </div>
       `).join("");
-      document.getElementById("partners").innerHTML = partnersHtml;
+      document.getElementById("partnersList").innerHTML = partnersHtml;
       document.getElementById("totalCash").textContent = `${totalCash.toFixed(2)} PKR`;
 
       // Inventory
       const inventoryHtml = inventory.map(item => `
-        <div class="bg-blue-50 p-4 rounded-lg shadow">
-          <p class="font-medium text-blue-800">Category: ${item.category}</p>
-          <p>Quantity: ${item.quantity}</p>
-          <p>Total Value: ${item.total_value.toFixed(2)} PKR</p>
+        <div class="bg-white p-3 rounded-lg shadow-md flex items-center">
+          <i class="fas fa-tshirt text-blue-700 mr-2"></i>
+          <div>
+            <p class="font-medium text-blue-800 text-sm">${item.category}</p>
+            <p class="text-sm">Quantity: ${item.quantity}</p>
+            <p class="text-sm">Value: ${item.total_value.toFixed(2)} PKR</p>
+          </div>
         </div>
       `).join("");
-      document.getElementById("inventory").innerHTML = inventoryHtml;
+      document.getElementById("inventoryList").innerHTML = inventoryHtml;
 
       // Transactions (sorted by date descending)
       const allTransactions = [
@@ -212,9 +246,12 @@
       ].sort((a, b) => new Date(b.date) - new Date(a.date));
 
       const transactionsHtml = allTransactions.map((t, index) => `
-        <div class="bg-blue-50 p-4 rounded-lg shadow flex justify-between items-center">
-          <div>
-            <p class="font-medium text-blue-800">Type: ${t.type}</p>
+        <div class="bg-white p-3 rounded-lg shadow-md flex flex-col sm:flex-row sm:justify-between sm:items-center">
+          <div class="text-sm">
+            <p class="font-medium text-blue-800 flex items-center">
+              <i class="fas ${t.type === 'Purchase' ? 'fa-shopping-cart' : t.type === 'Sale' ? 'fa-money-bill' : t.type === 'Refund' ? 'fa-undo' : 'fa-wallet'} mr-2"></i>
+              ${t.type}
+            </p>
             ${t.category ? `<p>Category: ${t.category}</p>` : ""}
             ${t.quantity ? `<p>Quantity: ${t.quantity}</p>` : ""}
             <p>Amount: ${t.amount.toFixed(2)} PKR</p>
@@ -222,10 +259,10 @@
             <p>Name: ${t.name}</p>
             ${t.receipt ? `<p>Receipt: ${t.receipt}</p>` : ""}
           </div>
-          <button onclick="deleteTransaction(${index})" class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition">Delete</button>
+          <button onclick="deleteTransaction(${index})" class="mt-2 sm:mt-0 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition text-sm flex items-center"><i class="fas fa-trash mr-2"></i> Delete</button>
         </div>
       `).join("");
-      document.getElementById("transactions").innerHTML = transactionsHtml;
+      document.getElementById("transactionsList").innerHTML = transactionsHtml;
     }
 
     // Add Purchase
@@ -441,6 +478,19 @@
       console.log("Saving transactions:", transactions);
       console.log("Saving expenses:", expenses);
     }
+
+    // Toggle Menu
+    document.getElementById("menuToggle").addEventListener("click", () => {
+      const menu = document.getElementById("menu");
+      menu.classList.toggle("hidden");
+    });
+
+    // Toggle Transactions
+    document.getElementById("toggleTransactions").addEventListener("click", (e) => {
+      const list = document.getElementById("transactionsList");
+      list.classList.toggle("hidden");
+      e.target.textContent = list.classList.contains("hidden") ? "Show" : "Hide";
+    });
 
     // Initialize
     loadData();
