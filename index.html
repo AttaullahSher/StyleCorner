@@ -7,63 +7,144 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
-<body class="bg-gray-100 font-sans">
-  <div class="container mx-auto p-4">
-    <h1 class="text-3xl font-bold text-center mb-6">StyleCorner Management</h1>
-
+<body class="bg-blue-50 font-sans">
+  <header class="bg-blue-600 text-white p-4">
+    <h1 class="text-2xl font-bold text-center">StyleCorner</h1>
+  </header>
+  <div class="container mx-auto p-4 max-w-4xl">
     <!-- Partners' Shares -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Partners' Shares</h2>
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-blue-800">Partners' Shares</h2>
       <div id="partners" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
-      <p class="mt-4">Total Available Cash: <span id="totalCash" class="font-bold">0 PKR</span></p>
+      <p class="mt-4 text-blue-800">Total Available Cash: <span id="totalCash" class="font-bold">0 PKR</span></p>
     </div>
 
     <!-- Inventory -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Inventory</h2>
-      <div id="inventory" class="space-y-2"></div>
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-blue-800">Inventory</h2>
+      <div id="inventory" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
     </div>
 
     <!-- Add Purchase -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Add Purchase</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input id="purchaseCategory" type="text" placeholder="Category (e.g., Male, Female)" class="border p-2 rounded">
-        <input id="purchaseQuantity" type="number" placeholder="Quantity" class="border p-2 rounded">
-        <input id="purchaseAmount" type="number" placeholder="Amount (PKR)" class="border p-2 rounded">
-        <input id="purchaseSupplier" type="text" placeholder="Supplier Name" class="border p-2 rounded">
-        <input id="purchaseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded">
-        <button onclick="addPurchase()" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600">Add Purchase</button>
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Purchase</h2>
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="purchaseCategory" class="border p-2 rounded w-full">
+            <option value="Male Unstitched">Male Unstitched</option>
+            <option value="Female Unstitched">Female Unstitched</option>
+            <option value="Male Stitched">Male Stitched</option>
+            <option value="Female Stitched">Female Stitched</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Quantity</label>
+          <input id="purchaseQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full" min="1">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+          <input id="purchaseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Supplier Name</label>
+          <input id="purchaseSupplier" type="text" placeholder="Supplier Name" class="border p-2 rounded w-full">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Receipt (Optional)</label>
+          <input id="purchaseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full">
+        </div>
+        <button onclick="addPurchase()" class="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition">Add Purchase</button>
       </div>
     </div>
 
     <!-- Add Sale -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Add Sale</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input id="saleCategory" type="text" placeholder="Category (e.g., Male, Female)" class="border p-2 rounded">
-        <input id="saleQuantity" type="number" placeholder="Quantity" class="border p-2 rounded">
-        <input id="saleAmount" type="number" placeholder="Amount (PKR)" class="border p-2 rounded">
-        <input id="saleCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded">
-        <button onclick="addSale()" class="bg-green-500 text-white p-2 rounded hover:bg-green-600">Add Sale</button>
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Sale</h2>
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="saleCategory" class="border p-2 rounded w-full">
+            <option value="Male Unstitched">Male Unstitched</option>
+            <option value="Female Unstitched">Female Unstitched</option>
+            <option value="Male Stitched">Male Stitched</option>
+            <option value="Female Stitched">Female Stitched</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Quantity</label>
+          <input id="saleQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full" min="1">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+          <input id="saleAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Customer Name</label>
+          <input id="saleCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full">
+        </div>
+        <button onclick="addSale()" class="bg-green-500 text-white p-2 rounded hover:bg-green-600 transition">Add Sale</button>
+      </div>
+    </div>
+
+    <!-- Add Refund -->
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Refund</h2>
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Category</label>
+          <select id="refundCategory" class="border p-2 rounded w-full">
+            <option value="Male Unstitched">Male Unstitched</option>
+            <option value="Female Unstitched">Female Unstitched</option>
+            <option value="Male Stitched">Male Stitched</option>
+            <option value="Female Stitched">Female Stitched</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Quantity</label>
+          <input id="refundQuantity" type="number" placeholder="Quantity" class="border p-2 rounded w-full" min="1">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+          <input id="refundAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Customer Name</label>
+          <input id="refundCustomer" type="text" placeholder="Customer Name" class="border p-2 rounded w-full">
+        </div>
+        <button onclick="addRefund()" class="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition">Add Refund</button>
       </div>
     </div>
 
     <!-- Add Expense -->
-    <div class="bg-white p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-4">Add Expense</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <input id="expenseType" type="text" placeholder="Type (e.g., Courier, Marketing)" class="border p-2 rounded">
-        <input id="expenseAmount" type="number" placeholder="Amount (PKR)" class="border p-2 rounded">
-        <input id="expenseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded">
-        <button onclick="addExpense()" class="bg-red-500 text-white p-2 rounded hover:bg-red-600">Add Expense</button>
+    <div class="bg-white p-6 rounded-lg shadow-lg mb-6">
+      <h2 class="text-xl font-semibold mb-4 text-blue-800">Add Expense</h2>
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Type</label>
+          <select id="expenseType" class="border p-2 rounded w-full">
+            <option value="Stitching">Stitching</option>
+            <option value="Courier">Courier</option>
+            <option value="Marketing">Marketing</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Amount (PKR)</label>
+          <input id="expenseAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full" min="0" step="0.01">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Receipt (Optional)</label>
+          <input id="expenseReceipt" type="file" accept=".pdf,.jpg,.png" class="border p-2 rounded w-full">
+        </div>
+        <button onclick="addExpense()" class="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition">Add Expense</button>
       </div>
     </div>
 
     <!-- Transactions -->
-    <div class="bg-white p-4 rounded shadow">
-      <h2 class="text-xl font-semibold mb-4">Transactions</h2>
-      <div id="transactions" class="space-y-2"></div>
+    <div class="bg-white p-6 rounded-lg shadow-lg">
+      <h2 class="text-xl font-semibold mb-4 text-blue-800">Transactions</h2>
+      <div id="transactions" class="space-y-4"></div>
     </div>
   </div>
 
@@ -71,7 +152,7 @@
     const partners = [
       { name: "Hafsa", investment: 25000 },
       { name: "Talha", investment: 25000 },
-      { name: "Sadaf", investment: 25000 },
+      { name: "Waseem", investment: 25000 },
       { name: "Atta", investment: 25000 }
     ];
     let totalCash = partners.reduce((sum, p) => sum + p.investment, 0);
@@ -81,10 +162,11 @@
 
     // Load data from CSV files (mock for local development)
     function loadData() {
-      // Mock initial data (replace with actual CSV reading for production)
       inventory = [
-        { category: "Male", quantity: 0, total_value: 0 },
-        { category: "Female", quantity: 0, total_value: 0 }
+        { category: "Male Unstitched", quantity: 0, total_value: 0 },
+        { category: "Female Unstitched", quantity: 0, total_value: 0 },
+        { category: "Male Stitched", quantity: 0, total_value: 0 },
+        { category: "Female Stitched", quantity: 0, total_value: 0 }
       ];
       updateUI();
     }
@@ -95,9 +177,9 @@
       const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
       const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
       const partnersHtml = partners.map(p => `
-        <div class="bg-gray-50 p-4 rounded">
-          <p class="font-semibold">${p.name}</p>
-          <p>Investment: ${p.investment} PKR</p>
+        <div class="bg-blue-50 p-4 rounded-lg shadow">
+          <p class="font-semibold text-blue-800">${p.name}</p>
+          <p>Investment: ${p.investment.toFixed(2)} PKR</p>
           <p>Share: ${((p.investment / totalInvestment) * (profit + totalInvestment)).toFixed(2)} PKR</p>
         </div>
       `).join("");
@@ -106,21 +188,22 @@
 
       // Inventory
       const inventoryHtml = inventory.map(item => `
-        <div class="bg-gray-50 p-2 rounded">
-          <p>Category: ${item.category}</p>
+        <div class="bg-blue-50 p-4 rounded-lg shadow">
+          <p class="font-medium text-blue-800">Category: ${item.category}</p>
           <p>Quantity: ${item.quantity}</p>
           <p>Total Value: ${item.total_value.toFixed(2)} PKR</p>
         </div>
       `).join("");
       document.getElementById("inventory").innerHTML = inventoryHtml;
 
-      // Transactions
+      // Transactions (sorted by date descending)
+      transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
       const transactionsHtml = transactions.map(t => `
-        <div class="bg-gray-50 p-2 rounded">
-          <p>Type: ${t.type}</p>
+        <div class="bg-blue-50 p-4 rounded-lg shadow">
+          <p class="font-medium text-blue-800">Type: ${t.type}</p>
           <p>Category: ${t.category}</p>
           <p>Quantity: ${t.quantity}</p>
-          <p>Amount: ${t.amount} PKR</p>
+          <p>Amount: ${t.amount.toFixed(2)} PKR</p>
           <p>Date: ${t.date}</p>
           <p>Name: ${t.name}</p>
         </div>
@@ -137,7 +220,6 @@
       const receipt = document.getElementById("purchaseReceipt").files[0];
 
       if (category && quantity > 0 && amount > 0 && supplier) {
-        // Update inventory
         let item = inventory.find(i => i.category === category);
         if (!item) {
           item = { category, quantity: 0, total_value: 0 };
@@ -146,7 +228,6 @@
         item.quantity += quantity;
         item.total_value += amount;
 
-        // Update transactions
         transactions.push({
           type: "Purchase",
           category,
@@ -156,20 +237,12 @@
           name: supplier
         });
 
-        // Update cash
         totalCash -= amount;
-
-        // Save receipt (mock for local development)
         console.log("Receipt uploaded:", receipt ? receipt.name : "None");
-
-        // Save to CSV (mock for local development)
         saveToCSV();
-
-        // Update UI
         updateUI();
 
-        // Clear inputs
-        document.getElementById("purchaseCategory").value = "";
+        document.getElementById("purchaseCategory").value = "Male Unstitched";
         document.getElementById("purchaseQuantity").value = "";
         document.getElementById("purchaseAmount").value = "";
         document.getElementById("purchaseSupplier").value = "";
@@ -187,18 +260,15 @@
       const customer = document.getElementById("saleCustomer").value;
 
       if (category && quantity > 0 && amount > 0 && customer) {
-        // Check inventory
         const item = inventory.find(i => i.category === category);
         if (!item || item.quantity < quantity) {
           alert("Insufficient inventory!");
           return;
         }
 
-        // Update inventory
         item.quantity -= quantity;
-        item.total_value -= (item.total_value / item.quantity) * quantity;
+        item.total_value -= (item.total_value / (item.quantity + quantity)) * quantity;
 
-        // Update transactions
         transactions.push({
           type: "Sale",
           category,
@@ -208,20 +278,52 @@
           name: customer
         });
 
-        // Update cash
         totalCash += amount;
-
-        // Save to CSV (mock for local development)
         saveToCSV();
-
-        // Update UI
         updateUI();
 
-        // Clear inputs
-        document.getElementById("saleCategory").value = "";
+        document.getElementById("saleCategory").value = "Male Unstitched";
         document.getElementById("saleQuantity").value = "";
         document.getElementById("saleAmount").value = "";
         document.getElementById("saleCustomer").value = "";
+      } else {
+        alert("Please fill all fields correctly.");
+      }
+    }
+
+    // Add Refund
+    function addRefund() {
+      const category = document.getElementById("refundCategory").value;
+      const quantity = parseInt(document.getElementById("refundQuantity").value);
+      const amount = parseFloat(document.getElementById("refundAmount").value);
+      const customer = document.getElementById("refundCustomer").value;
+
+      if (category && quantity > 0 && amount > 0 && customer) {
+        let item = inventory.find(i => i.category === category);
+        if (!item) {
+          item = { category, quantity: 0, total_value: 0 };
+          inventory.push(item);
+        }
+        item.quantity += quantity;
+        item.total_value += amount;
+
+        transactions.push({
+          type: "Refund",
+          category,
+          quantity,
+          amount,
+          date: new Date().toISOString().split("T")[0],
+          name: customer
+        });
+
+        totalCash -= amount;
+        saveToCSV();
+        updateUI();
+
+        document.getElementById("refundCategory").value = "Male Unstitched";
+        document.getElementById("refundQuantity").value = "";
+        document.getElementById("refundAmount").value = "";
+        document.getElementById("refundCustomer").value = "";
       } else {
         alert("Please fill all fields correctly.");
       }
@@ -234,7 +336,6 @@
       const receipt = document.getElementById("expenseReceipt").files[0];
 
       if (type && amount > 0) {
-        // Update expenses
         expenses.push({
           type,
           amount,
@@ -242,17 +343,11 @@
           receipt: receipt ? receipt.name : "None"
         });
 
-        // Update cash
         totalCash -= amount;
-
-        // Save to CSV (mock for local development)
         saveToCSV();
-
-        // Update UI
         updateUI();
 
-        // Clear inputs
-        document.getElementById("expenseType").value = "";
+        document.getElementById("expenseType").value = "Stitching";
         document.getElementById("expenseAmount").value = "";
         document.getElementById("expenseReceipt").value = "";
       } else {
@@ -262,15 +357,9 @@
 
     // Save to CSV (mock for local development)
     function saveToCSV() {
-      // Mock saving to CSV
       console.log("Saving inventory:", inventory);
       console.log("Saving transactions:", transactions);
       console.log("Saving expenses:", expenses);
-
-      // For actual CSV saving, use PapaParse to write to files
-      // Example:
-      // Papa.unparse(inventory) for inventory.csv
-      // This requires a server-side solution or FileSystem API (not fully supported in browsers)
     }
 
     // Initialize
