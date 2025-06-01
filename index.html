@@ -276,9 +276,15 @@
         const transData = [["type", "category", "quantity", "amount", "date", "name", "timestamp"], ...transactions.map(t => [t.type, t.category, t.quantity.toString(), t.amount.toString(), t.date, t.name, t.timestamp])];
         const expData = [["type", "amount", "date", "timestamp"], ...expenses.map(e => [e.type, e.amount.toString(), e.date, e.timestamp])];
         await Promise.all([
-          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Inventory", data: JSON.stringify(invData) }),
-          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Transactions", data: JSON.stringify(transData) }),
-          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Expenses", data: JSON.stringify(expData) }),
+          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Inventory", data: JSON.stringify(invData) }, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          }),
+          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Transactions", data: JSON.stringify(transData) }, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          }),
+          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Expenses", data: JSON.stringify(expData) }, {
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+          }),
         ]);
         localStorage.setItem("totalCash", totalCash.toString());
       } catch (err) {
@@ -404,7 +410,7 @@
       const expenseType = document.getElementById("expenseType")?.value;
       const now = new Date();
       const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
-      const timestamp = now.toISOString(); // Full timestamp (e.g., 2025-06-01T14:06:00.000Z)
+      const timestamp = now.toISOString(); // Full timestamp (e.g., 2025-06-01T14:30:00.000Z)
 
       if ((type !== "expense" && category && quantity > 0 && amount > 0 && name) || (type === "expense" && expenseType && amount > 0)) {
         if (type === "sale" && (!inventory.find(i => i.category === category) || inventory.find(i => i.category === category).quantity < quantity)) {
