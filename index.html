@@ -8,37 +8,27 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <style>
-    #partners, #inventory, #record, #transactions {
-      border: 2px solid #10b981; /* Green border */
+    #record, #partners, #inventory, #transactions {
+      border: 2px solid #10b981;
       border-radius: 1rem;
       padding: 1.5rem;
       background-color: #f9fafb;
     }
-    #partnersList i,
-    #inventoryList i {
+    #partnersList i, #inventoryList i {
       display: none;
     }
-    /* 4-card grid on mobile */
     @media (max-width: 640px) {
       #partnersList {
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 0.5rem;
       }
-      #partnersList > div {
-        padding: 0.5rem;
-      }
-      #partnersList p {
-        font-size: 0.75rem;
-      }
+      #partnersList > div { padding: 0.5rem; }
+      #partnersList p { font-size: 0.75rem; }
     }
-    /* Bold 0 pcs in inventory */
-    .zero-pcs {
-      font-weight: bold;
-      color: #ef4444; /* Red for emphasis */
-    }
-    /* Enhanced button styles */
-    button {
-      border-radius: 0.5rem;
+    .zero-pcs { font-weight: bold; color: #ef4444; }
+    button { border-radius: 0.5rem; }
+    #manageModal, #addInvestorModal {
+      background-color: rgba(0, 0, 0, 0.5);
     }
   </style>
 </head>
@@ -55,56 +45,6 @@
   </header>
 
   <div class="container mx-auto p-4 max-w-5xl">
-    <!-- Partners' Shares -->
-    <div id="partners" class="mb-6">
-      <h2 class="text-xl font-semibold text-green-800 flex items-center mb-4">
-        <i class="fas fa-users mr-2"></i> Partners' Shares
-      </h2>
-      <div id="partnersList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
-        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
-          <div class="text-center">
-            <p class="font-semibold text-green-800 text-sm">Hafsa</p>
-            <p class="text-sm">28%</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="hafsaShare">25000</p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
-          <div class="text-center">
-            <p class="font-semibold text-green-800 text-sm">Talha</p>
-            <p class="text-sm">26%</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="talhaShare">25000</p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
-          <div class="text-center">
-            <p class="font-semibold text-green-800 text-sm">Sadaf</p>
-            <p class="text-sm">23%</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="sadafShare">25000</p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
-          <div class="text-center">
-            <p class="font-semibold text-green-800 text-sm">Atta</p>
-            <p class="text-sm">23%</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="attaShare">25000</p>
-          </div>
-        </div>
-      </div>
-      <p class="mt-4 text-green-800 text-sm flex items-center">
-        <i class="fas fa-coins mr-2"></i> Total Cash: 
-        <span id="totalCash" class="font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full ml-1">100000.00 PKR</span>
-      </p>
-    </div>
-
-    <!-- Inventory -->
-    <div id="inventory" class="mb-6">
-      <h2 class="text-xl font-semibold text-green-800 flex items-center mb-4">
-        <i class="fas fa-box mr-2"></i> Inventory
-      </h2>
-      <div id="inventoryList" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
-    </div>
-
-    <!-- Record Transaction -->
     <div id="record" class="mb-6">
       <h2 class="text-xl font-semibold text-green-800 flex items-center mb-4">
         <i class="fas fa-plus mr-2"></i> Record Transaction
@@ -120,7 +60,27 @@
       </div>
     </div>
 
-    <!-- Transactions -->
+    <div id="partners" class="mb-6">
+      <h2 class="text-xl font-semibold text-green-800 flex items-center mb-4">
+        <i class="fas fa-users mr-2"></i> Partners' Shares
+        <button onclick="openAddInvestorModal()" class="ml-2 text-green-600 hover:text-green-800 transition-colors">
+          <i class="fas fa-plus"></i>
+        </button>
+      </h2>
+      <div id="partnersList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4"></div>
+      <p class="mt-4 text-green-800 text-sm flex items-center">
+        <i class="fas fa-coins mr-2"></i> Total Cash: 
+        <span id="totalCash" class="font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full ml-1">100000.00 PKR</span>
+      </p>
+    </div>
+
+    <div id="inventory" class="mb-6">
+      <h2 class="text-xl font-semibold text-green-800 flex items-center mb-4">
+        <i class="fas fa-box mr-2"></i> Inventory
+      </h2>
+      <div id="inventoryList" class="grid grid-cols-2 sm:grid-cols-4 gap-4"></div>
+    </div>
+
     <div id="transactions">
       <h2 class="text-xl font-semibold text-green-800 flex items-center mb-4">
         <span><i class="fas fa-list mr-2"></i> Transactions</span>
@@ -141,129 +101,144 @@
     </div>
   </div>
 
+  <!-- Modal for Managing Shares -->
+  <div id="manageModal" class="fixed inset-0 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+      <h2 class="text-lg font-semibold text-green-800 mb-4">Manage Shares for <span id="modalShareholder"></span></h2>
+      <div class="grid grid-cols-1 gap-4">
+        <select id="actionType" class="border p-2 rounded w-full text-sm focus:ring-2 focus:ring-green-500">
+          <option value="withdraw">Withdraw</option>
+          <option value="invest">Invest</option>
+        </select>
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Amount (PKR)</label>
+          <input id="modalAmount" type="number" placeholder="Amount" class="border p-2 rounded w-full text-sm focus:ring-2 focus:ring-green-500" min="0" step="0.01">
+        </div>
+        <div class="flex justify-end gap-2">
+          <button onclick="closeModal()" class="bg-gray-500 text-white p-2 rounded-lg hover:bg-gray-600 transition-colors text-sm">Cancel</button>
+          <button onclick="submitManageShare()" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors text-sm">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for Adding New Investor -->
+  <div id="addInvestorModal" class="fixed inset-0 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+      <h2 class="text-lg font-semibold text-green-800 mb-4">Add New Investor</h2>
+      <div class="grid grid-cols-1 gap-4">
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Investor Name</label>
+          <input id="newInvestorName" type="text" placeholder="Investor Name" class="border p-2 rounded w-full text-sm focus:ring-2 focus:ring-green-500">
+        </div>
+        <div>
+          <label class="block text-xs font-medium text-gray-700">Initial Investment (PKR)</label>
+          <input id="newInvestorInvestment" type="number" placeholder="Initial Investment" class="border p-2 rounded w-full text-sm focus:ring-2 focus:ring-green-500" min="0" step="0.01">
+        </div>
+        <div class="flex justify-end gap-2">
+          <button onclick="closeAddInvestorModal()" class="bg-gray-500 text-white p-2 rounded-lg hover:bg-gray-600 transition-colors text-sm">Cancel</button>
+          <button onclick="addNewInvestor()" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition-colors text-sm">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     const SHEET_ID = "1UfLjgdC5rsVOm4bKar81GHUZy_X8TEFU928JrDPG418";
     const API_KEY = "AIzaSyCGwzmW2Ylzq4jHJmawcEOUxiv7WQSKGKI";
     const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2TJtHRq4zigAKvuqMNDluV646YFoA7ojFxukmyGqQCFdRQOo9GOsLS1OAMWeOmTw/exec";
-    const partners = [
-      { name: "Hafsa", investment: 25000, profitShare: 0.28 },
-      { name: "Talha", investment: 25000, profitShare: 0.26 },
-      { name: "Sadaf", investment: 25000, profitShare: 0.23 },
-      { name: "Atta", investment: 25000, profitShare: 0.23 }
-    ];
+    let partners = [];
     const PASSWORD = "2532";
-    let totalCash = 100000; // Initial cash in hand as a number
+    let totalCash = 0;
     let inventory = [];
     let transactions = [];
     let expenses = [];
+    let saveTimeout = null;
 
     async function loadData() {
       document.getElementById("loading").classList.remove("hidden");
       try {
-        const [invRes, transRes, expRes] = await Promise.all([
+        const [invRes, transRes, expRes, shareRes] = await Promise.all([
           axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Inventory?key=${API_KEY}`),
           axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Transactions?key=${API_KEY}`),
           axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Expenses?key=${API_KEY}`),
+          axios.get(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Shareholders?key=${API_KEY}`)
         ]);
 
-        // Load inventory
         inventory = invRes.data.values?.slice(1).map(row => ({
-          category: row[0],
-          quantity: parseInt(row[1]) || 0,
-          total_value: parseFloat(row[2]) || 0
+          category: row[0], quantity: parseInt(row[1]) || 0, total_value: parseFloat(row[2]) || 0
+        })) || [{ category: "Male", quantity: 0, total_value: 0 }, { category: "Female 2pc", quantity: 0, total_value: 0 }, { category: "Female 3pc", quantity: 0, total_value: 0 }, { category: "Staller", quantity: 0, total_value: 0 }];
+
+        transactions = transRes.data.values?.slice(1).map(row => ({
+          type: row[0], category: row[1] || "", quantity: parseInt(row[2]) || "", amount: parseFloat(row[3]) || 0, date: row[4], name: row[5] || "", timestamp: row[6] || row[4]
+        })) || [];
+
+        expenses = expRes.data.values?.slice(1).map(row => ({
+          type: row[0], amount: parseFloat(row[1]) || 0, date: row[2], timestamp: row[3] || row[2]
+        })) || [];
+
+        partners = shareRes.data.values?.slice(1).map(row => ({
+          name: row[0], initialInvestment: parseFloat(row[1]) || 25000, currentInvestment: parseFloat(row[2]) || 25000, profitShare: (parseFloat(row[3]) || 25) / 100
         })) || [
-          { category: "Male", quantity: 0, total_value: 0 },
-          { category: "Female 2pc", quantity: 0, total_value: 0 },
-          { category: "Female 3pc", quantity: 0, total_value: 0 },
-          { category: "Staller", quantity: 0, total_value: 0 }
+          { name: "Hafsa", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 },
+          { name: "Talha", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 },
+          { name: "Sadaf", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 },
+          { name: "Atta", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 }
         ];
 
-        // Load transactions
-        transactions = transRes.data.values?.slice(1).map(row => ({
-          type: row[0],
-          category: row[1] || "",
-          quantity: parseInt(row[2]) || "",
-          amount: parseFloat(row[3]) || 0,
-          date: row[4],
-          name: row[5] || "",
-          timestamp: row[6] || row[4] // Use timestamp if available, fallback to date
-        })) || [];
-
-        // Load expenses
-        expenses = expRes.data.values?.slice(1).map(row => ({
-          type: row[0],
-          amount: parseFloat(row[1]) || 0,
-          date: row[2],
-          timestamp: row[3] || row[2] // Use timestamp if available, fallback to date
-        })) || [];
-
-        // Check if all sheets are empty
         const isInventoryEmpty = !invRes.data.values || invRes.data.values.length <= 1;
         const isTransactionsEmpty = !transRes.data.values || transRes.data.values.length <= 1;
         const isExpensesEmpty = !expRes.data.values || expRes.data.values.length <= 1;
 
         if (isInventoryEmpty && isTransactionsEmpty && isExpensesEmpty) {
-          // Reset totalCash and clear localStorage if all sheets are empty
-          totalCash = 100000;
+          totalCash = partners.reduce((sum, p) => sum + p.initialInvestment, 0);
           localStorage.removeItem("totalCash");
         } else {
-          // Recalculate totalCash and inventory based on transactions and expenses
-          totalCash = 100000; // Start from initial cash
-          inventory = [
-            { category: "Male", quantity: 0, total_value: 0 },
-            { category: "Female 2pc", quantity: 0, total_value: 0 },
-            { category: "Female 3pc", quantity: 0, total_value: 0 },
-            { category: "Staller", quantity: 0, total_value: 0 }
-          ];
+          totalCash = partners.reduce((sum, p) => sum + p.initialInvestment, 0);
+          inventory = [{ category: "Male", quantity: 0, total_value: 0 }, { category: "Female 2pc", quantity: 0, total_value: 0 }, { category: "Female 3pc", quantity: 0, total_value: 0 }, { category: "Staller", quantity: 0, total_value: 0 }];
 
-          // Process transactions to update inventory and totalCash
           transactions.forEach(t => {
             let item = inventory.find(i => i.category === t.category);
             if (!item && (t.type === "Purchase" || t.type === "Refund")) {
               item = { category: t.category, quantity: 0, total_value: 0 };
               inventory.push(item);
             }
-            if (t.type === "Purchase") {
-              item.quantity += t.quantity;
-              item.total_value += t.amount;
+            if (t.type === "Purchase") { item.quantity += t.quantity; item.total_value += t.amount; totalCash -= t.amount; }
+            else if (t.type === "Sale") { item.quantity -= t.quantity; item.total_value -= (item.total_value / (item.quantity + t.quantity)) * t.quantity; totalCash += t.amount; }
+            else if (t.type === "Refund") { item.quantity += t.quantity; item.total_value += t.amount; totalCash -= t.amount; }
+            else if (t.type === "Withdrawal") {
+              const partner = partners.find(p => p.name === t.name);
+              if (partner) partner.currentInvestment -= t.amount;
               totalCash -= t.amount;
-            } else if (t.type === "Sale") {
-              item.quantity -= t.quantity;
-              item.total_value -= (item.total_value / (item.quantity + t.quantity)) * t.quantity;
+            }
+            else if (t.type === "Investment") {
+              const partner = partners.find(p => p.name === t.name);
+              if (partner) partner.currentInvestment += t.amount;
               totalCash += t.amount;
-            } else if (t.type === "Refund") {
-              item.quantity += t.quantity;
-              item.total_value += t.amount;
-              totalCash -= t.amount;
             }
           });
 
-          // Process expenses to update totalCash
-          expenses.forEach(e => {
-            totalCash -= e.amount;
-          });
-
-          // Remove empty inventory items
+          expenses.forEach(e => totalCash -= e.amount);
           inventory = inventory.filter(item => item.quantity > 0 || item.total_value > 0);
+          recalculateProfitShares();
         }
-
         updateUI();
       } catch (err) {
-        document.getElementById("notification").textContent = "Failed to load data from Google Sheets. Check API key and sharing settings.";
+        document.getElementById("notification").textContent = "Failed to load data from Google Sheets.";
         document.getElementById("notification").classList.remove("hidden");
         setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
         console.error("Error loading data:", err.response ? err.response.data : err.message);
-        // Fallback: Reset to initial state if loading fails
         totalCash = 100000;
         localStorage.removeItem("totalCash");
-        inventory = [
-          { category: "Male", quantity: 0, total_value: 0 },
-          { category: "Female 2pc", quantity: 0, total_value: 0 },
-          { category: "Female 3pc", quantity: 0, total_value: 0 },
-          { category: "Staller", quantity: 0, total_value: 0 }
-        ];
+        inventory = [{ category: "Male", quantity: 0, total_value: 0 }, { category: "Female 2pc", quantity: 0, total_value: 0 }, { category: "Female 3pc", quantity: 0, total_value: 0 }, { category: "Staller", quantity: 0, total_value: 0 }];
         transactions = [];
         expenses = [];
+        partners = [
+          { name: "Hafsa", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 },
+          { name: "Talha", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 },
+          { name: "Sadaf", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 },
+          { name: "Atta", initialInvestment: 25000, currentInvestment: 25000, profitShare: 0.25 }
+        ];
         updateUI();
       } finally {
         document.getElementById("loading").classList.add("hidden");
@@ -271,43 +246,50 @@
     }
 
     async function saveToSheets() {
-      try {
-        const invData = [["category", "quantity", "total_value"], ...inventory.map(i => [i.category, i.quantity.toString(), i.total_value.toString()])];
-        const transData = [["type", "category", "quantity", "amount", "date", "name", "timestamp"], ...transactions.map(t => [t.type, t.category, t.quantity.toString(), t.amount.toString(), t.date, t.name, t.timestamp])];
-        const expData = [["type", "amount", "date", "timestamp"], ...expenses.map(e => [e.type, e.amount.toString(), e.date, e.timestamp])];
-        await Promise.all([
-          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Inventory", data: JSON.stringify(invData) }, {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-          }),
-          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Transactions", data: JSON.stringify(transData) }, {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-          }),
-          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Expenses", data: JSON.stringify(expData) }, {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-          }),
-        ]);
-        localStorage.setItem("totalCash", totalCash.toString());
-      } catch (err) {
-        document.getElementById("notification").textContent = "Save failed. Data may not be updated. Refreshing to retry...";
-        document.getElementById("notification").classList.remove("hidden");
-        setTimeout(() => {
-          document.getElementById("notification").classList.add("hidden");
-          location.reload(); // Refresh page to retry loading
-        }, 3000);
-        console.error("Error saving data:", err);
-      }
+      if (saveTimeout) clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(async () => {
+        try {
+          const invData = [["category", "quantity", "total_value"], ...inventory.map(i => [i.category, i.quantity.toString(), i.total_value.toString()])];
+          const transData = [["type", "category", "quantity", "amount", "date", "name", "timestamp"], ...transactions.map(t => [t.type, t.category, t.quantity.toString(), t.amount.toString(), t.date, t.name, t.timestamp])];
+          const expData = [["type", "amount", "date", "timestamp"], ...expenses.map(e => [e.type, e.amount.toString(), e.date, e.timestamp])];
+          const shareData = [["Name", "Initial Investment", "Current Investment", "Profit/Loss Share (%)", "Total Share Value", "Invested in Inventory", "Available Cash"], ...partners.map(p => {
+            const totalInvestment = partners.reduce((sum, p) => sum + p.currentInvestment, 0);
+            const inventoryValue = inventory.reduce((sum, i) => sum + i.total_value, 0);
+            const investedInventory = p.profitShare * inventoryValue;
+            const totalShareValue = p.currentInvestment + ((totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0)) * p.profitShare);
+            const availableCash = totalShareValue - investedInventory;
+            return [p.name, p.initialInvestment.toString(), p.currentInvestment.toString(), (p.profitShare * 100).toFixed(2), totalShareValue.toFixed(0), investedInventory.toFixed(0), availableCash.toFixed(0)];
+          })];
+          await Promise.all([
+            axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Inventory", data: JSON.stringify(invData) }, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }),
+            axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Transactions", data: JSON.stringify(transData) }, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }),
+            axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Expenses", data: JSON.stringify(expData) }, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }),
+            axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Shareholders", data: JSON.stringify(shareData) }, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
+          ]);
+          localStorage.setItem("totalCash", totalCash.toString());
+        } catch (err) {
+          document.getElementById("notification").textContent = "Save failed. Refreshing to retry...";
+          document.getElementById("notification").classList.remove("hidden");
+          setTimeout(() => { document.getElementById("notification").classList.add("hidden"); location.reload(); }, 3000);
+          console.error("Error saving data:", err);
+        }
+      }, 500);
     }
 
     function updateUI() {
-      const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
-      const profit = (totalCash || 0) - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
-      document.getElementById("hafsaShare").textContent = ((partners[0].profitShare) * profit + partners[0].investment).toFixed(0);
-      document.getElementById("talhaShare").textContent = ((partners[1].profitShare) * profit + partners[1].investment).toFixed(0);
-      document.getElementById("sadafShare").textContent = ((partners[2].profitShare) * profit + partners[2].investment).toFixed(0);
-      document.getElementById("attaShare").textContent = ((partners[3].profitShare) * profit + partners[3].investment).toFixed(0);
-      document.getElementById("totalCash").textContent = `${(totalCash || 0).toFixed(2)} PKR`;
-
-      document.getElementById("inventoryList").innerHTML = inventory.map(item => `
+      const totalInvestment = partners.reduce((sum, p) => sum + p.currentInvestment, 0);
+      const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
+      const partnersHtml = partners.map(partner => `
+        <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
+          <div class="text-center">
+            <p class="font-semibold text-green-800 text-sm">${partner.name}</p>
+            <p class="text-sm">${(partner.profitShare * 100).toFixed(2)}%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full">${(partner.currentInvestment + (profit * partner.profitShare)).toFixed(0)}</p>
+            <button onclick="openModal('${partner.name}')" class="mt-2 bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-600 transition-colors text-sm">Manage</button>
+          </div>
+        </div>
+      `).join("");
+      const inventoryHtml = inventory.map(item => `
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-center">
             <p class="font-medium text-green-800 text-sm">${item.category}</p>
@@ -316,21 +298,14 @@
           </div>
         </div>
       `).join("");
-
       const allTransactions = [...transactions, ...expenses.map(e => ({
-        type: "Expense",
-        category: "",
-        quantity: "",
-        amount: e.amount,
-        date: e.date,
-        name: e.type,
-        timestamp: e.timestamp
-      }))].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by timestamp in descending order
-      document.getElementById("transactionsList").innerHTML = allTransactions.map((t, index) => `
+        type: "Expense", category: "", quantity: "", amount: e.amount, date: e.date, name: e.type, timestamp: e.timestamp
+      }))].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+      const transactionsHtml = allTransactions.map((t, index) => `
         <div class="bg-white p-3 rounded-lg shadow-md flex justify-between items-center hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-sm">
-            <p class="font-medium ${t.type === 'Purchase' ? 'text-blue-600' : t.type === 'Sale' ? 'text-green-600' : t.type === 'Refund' ? 'text-yellow-600' : 'text-red-600'}">
-              <i class="fas ${t.type === 'Purchase' ? 'fa-shopping-cart' : t.type === 'Sale' ? 'fa-money-bill' : t.type === 'Refund' ? 'fa-undo' : 'fa-wallet'} mr-2"></i>
+            <p class="font-medium ${t.type === 'Purchase' ? 'text-blue-600' : t.type === 'Sale' ? 'text-green-600' : t.type === 'Refund' ? 'text-yellow-600' : t.type === 'Withdrawal' ? 'text-red-600' : t.type === 'Investment' ? 'text-purple-600' : 'text-red-600'}">
+              <i class="fas ${t.type === 'Purchase' ? 'fa-shopping-cart' : t.type === 'Sale' ? 'fa-money-bill' : t.type === 'Refund' ? 'fa-undo' : t.type === 'Withdrawal' ? 'fa-arrow-down' : t.type === 'Investment' ? 'fa-arrow-up' : 'fa-wallet'} mr-2"></i>
               ${t.type}
             </p>
             ${t.category ? `<p>${t.category}</p>` : ""}
@@ -344,6 +319,13 @@
           </button>
         </div>
       `).join("");
+
+      requestAnimationFrame(() => {
+        document.getElementById("partnersList").innerHTML = partnersHtml;
+        document.getElementById("totalCash").textContent = `${totalCash.toFixed(2)} PKR`;
+        document.getElementById("inventoryList").innerHTML = inventoryHtml;
+        document.getElementById("transactionsList").innerHTML = transactionsHtml;
+      });
     }
 
     function updateForm() {
@@ -409,8 +391,8 @@
       const name = document.getElementById("name")?.value;
       const expenseType = document.getElementById("expenseType")?.value;
       const now = new Date();
-      const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
-      const timestamp = now.toISOString(); // Full timestamp (e.g., 2025-06-01T14:30:00.000Z)
+      const date = now.toISOString().split("T")[0];
+      const timestamp = now.toISOString();
 
       if ((type !== "expense" && category && quantity > 0 && amount > 0 && name) || (type === "expense" && expenseType && amount > 0)) {
         if (type === "sale" && (!inventory.find(i => i.category === category) || inventory.find(i => i.category === category).quantity < quantity)) {
@@ -426,19 +408,9 @@
             item = { category, quantity: 0, total_value: 0 };
             inventory.push(item);
           }
-          if (type === "purchase") {
-            item.quantity += quantity;
-            item.total_value += amount;
-            totalCash -= amount;
-          } else if (type === "sale") {
-            item.quantity -= quantity;
-            item.total_value -= (item.total_value / (item.quantity + quantity)) * quantity;
-            totalCash += amount;
-          } else if (type === "refund") {
-            item.quantity += quantity;
-            item.total_value += amount;
-            totalCash -= amount;
-          }
+          if (type === "purchase") { item.quantity += quantity; item.total_value += amount; totalCash -= amount; }
+          else if (type === "sale") { item.quantity -= quantity; item.total_value -= (item.total_value / (item.quantity + quantity)) * quantity; totalCash += amount; }
+          else if (type === "refund") { item.quantity += quantity; item.total_value += amount; totalCash -= amount; }
           transactions.push({ type: type.charAt(0).toUpperCase() + type.slice(1), category, quantity, amount, date, name, timestamp });
         } else {
           expenses.push({ type: expenseType, amount, date, timestamp });
@@ -465,73 +437,189 @@
       }
 
       const allTransactions = [...transactions, ...expenses.map(e => ({
-        type: "Expense",
-        category: "",
-        quantity: "",
-        amount: e.amount,
-        date: e.date,
-        name: e.type,
-        timestamp: e.timestamp
+        type: "Expense", category: "", quantity: "", amount: e.amount, date: e.date, name: e.type, timestamp: e.timestamp
       }))].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       const transaction = allTransactions[index];
 
       if (transaction.type === "Purchase") {
         const item = inventory.find(i => i.category === transaction.category);
-        if (item) {
-          item.quantity -= transaction.quantity;
-          item.total_value -= transaction.amount;
-          if (item.quantity <= 0) inventory = inventory.filter(i => i.category !== transaction.category);
-        }
+        if (item) { item.quantity -= transaction.quantity; item.total_value -= transaction.amount; if (item.quantity <= 0) inventory = inventory.filter(i => i.category !== transaction.category); }
         totalCash += transaction.amount;
         transactions = transactions.filter(t => t !== transaction);
       } else if (transaction.type === "Sale") {
         const item = inventory.find(i => i.category === transaction.category);
-        if (item) {
-          item.quantity += transaction.quantity;
-          item.total_value += transaction.amount;
-        }
+        if (item) { item.quantity += transaction.quantity; item.total_value += transaction.amount; }
         totalCash -= transaction.amount;
         transactions = transactions.filter(t => t !== transaction);
       } else if (transaction.type === "Refund") {
         const item = inventory.find(i => i.category === transaction.category);
-        if (item) {
-          item.quantity -= transaction.quantity;
-          item.total_value -= transaction.amount;
-          if (item.quantity <= 0) inventory = inventory.filter(i => i.category !== transaction.category);
-        }
+        if (item) { item.quantity -= transaction.quantity; item.total_value -= transaction.amount; if (item.quantity <= 0) inventory = inventory.filter(i => i.category !== transaction.category); }
         totalCash += transaction.amount;
         transactions = transactions.filter(t => t !== transaction);
       } else if (transaction.type === "Expense") {
         totalCash += transaction.amount;
         expenses = expenses.filter(e => e.date !== transaction.date || e.amount !== transaction.amount || e.type !== transaction.name || e.timestamp !== transaction.timestamp);
+      } else if (transaction.type === "Withdrawal") {
+        totalCash += transaction.amount;
+        const partner = partners.find(p => p.name === transaction.name);
+        if (partner) partner.currentInvestment += transaction.amount;
+        transactions = transactions.filter(t => t !== transaction);
+        recalculateProfitShares();
+      } else if (transaction.type === "Investment") {
+        totalCash -= transaction.amount;
+        const partner = partners.find(p => p.name === transaction.name);
+        if (partner) partner.currentInvestment -= transaction.amount;
+        transactions = transactions.filter(t => t !== transaction);
+        recalculateProfitShares();
       }
 
       await saveToSheets();
       updateUI();
     }
 
+    let currentShareholder = null;
+    function openModal(shareholder) {
+      currentShareholder = shareholder;
+      document.getElementById("modalShareholder").textContent = shareholder;
+      document.getElementById("modalAmount").value = "";
+      document.getElementById("manageModal").classList.remove("hidden");
+    }
+
+    function closeModal() {
+      currentShareholder = null;
+      document.getElementById("manageModal").classList.add("hidden");
+    }
+
+    async function submitManageShare() {
+      const password = prompt("Enter password to manage share:");
+      if (password !== PASSWORD) {
+        document.getElementById("notification").textContent = "Incorrect password!";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        return;
+      }
+
+      const shareholder = currentShareholder;
+      const actionType = document.getElementById("actionType").value;
+      const amountInput = document.getElementById("modalAmount").value.trim();
+      const amount = parseFloat(amountInput);
+
+      if (amountInput === "" || isNaN(amount) || amount <= 0) {
+        document.getElementById("notification").textContent = "Please enter a valid amount greater than 0.";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        return;
+      }
+
+      const partner = partners.find(p => p.name === shareholder);
+      if (!partner) {
+        document.getElementById("notification").textContent = "Shareholder not found.";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        return;
+      }
+
+      const totalInvestment = partners.reduce((sum, p) => sum + p.currentInvestment, 0);
+      const inventoryValue = inventory.reduce((sum, i) => sum + i.total_value, 0);
+      const investedInventory = partner.profitShare * inventoryValue;
+      const totalShareValue = partner.currentInvestment + ((totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0)) * partner.profitShare);
+      const availableCash = totalShareValue - investedInventory;
+
+      const now = new Date();
+      const date = now.toISOString().split("T")[0];
+      const timestamp = now.toISOString();
+
+      if (actionType === "withdraw") {
+        if (amount > availableCash) {
+          document.getElementById("notification").textContent = "Insufficient available cash for withdrawal!";
+          document.getElementById("notification").classList.remove("hidden");
+          setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+          return;
+        }
+        if (amount > totalCash) {
+          document.getElementById("notification").textContent = "Insufficient cash in hand for withdrawal!";
+          document.getElementById("notification").classList.remove("hidden");
+          setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+          return;
+        }
+        partner.currentInvestment -= amount;
+        totalCash -= amount;
+        transactions.push({ type: "Withdrawal", category: "", quantity: "", amount, date, name: shareholder, timestamp });
+      } else if (actionType === "invest") {
+        partner.currentInvestment += amount;
+        totalCash += amount;
+        transactions.push({ type: "Investment", category: "", quantity: "", amount, date, name: shareholder, timestamp });
+      }
+
+      recalculateProfitShares();
+      await saveToSheets();
+      updateUI();
+      closeModal();
+    }
+
+    function openAddInvestorModal() {
+      document.getElementById("newInvestorName").value = "";
+      document.getElementById("newInvestorInvestment").value = "";
+      document.getElementById("addInvestorModal").classList.remove("hidden");
+    }
+
+    function closeAddInvestorModal() {
+      document.getElementById("addInvestorModal").classList.add("hidden");
+    }
+
+    async function addNewInvestor() {
+      const password = prompt("Enter password to add new investor:");
+      if (password !== PASSWORD) {
+        document.getElementById("notification").textContent = "Incorrect password!";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        return;
+      }
+
+      const name = document.getElementById("newInvestorName").value.trim();
+      const investmentInput = document.getElementById("newInvestorInvestment").value.trim();
+      const initialInvestment = parseFloat(investmentInput);
+
+      if (!name || investmentInput === "" || isNaN(initialInvestment) || initialInvestment <= 0) {
+        document.getElementById("notification").textContent = "Please enter a valid name and investment amount greater than 0.";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        return;
+      }
+
+      if (partners.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+        document.getElementById("notification").textContent = "Investor with this name already exists!";
+        document.getElementById("notification").classList.remove("hidden");
+        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        return;
+      }
+
+      partners.push({ name, initialInvestment, currentInvestment: initialInvestment, profitShare: 0 });
+      totalCash += initialInvestment;
+      recalculateProfitShares();
+      await saveToSheets();
+      updateUI();
+      closeAddInvestorModal();
+    }
+
+    function recalculateProfitShares() {
+      const totalPartners = partners.length;
+      if (totalPartners > 0) {
+        const equalShare = 1 / totalPartners;
+        partners.forEach(p => p.profitShare = equalShare);
+      }
+    }
+
     function exportCSV(type) {
       let data, headers, filename;
-      if (type === "inventory") {
-        headers = ["category", "quantity", "total_value"];
-        data = inventory;
-        filename = "inventory.csv";
-      } else if (type === "transactions") {
-        headers = ["type", "category", "quantity", "amount", "date", "name", "timestamp"];
-        data = transactions;
-        filename = "transactions.csv";
-      } else {
-        headers = ["type", "amount", "date", "timestamp"];
-        data = expenses;
-        filename = "expenses.csv";
-      }
+      if (type === "inventory") { headers = ["category", "quantity", "total_value"]; data = inventory; filename = "inventory.csv"; }
+      else if (type === "transactions") { headers = ["type", "category", "quantity", "amount", "date", "name", "timestamp"]; data = transactions; filename = "transactions.csv"; }
+      else { headers = ["type", "amount", "date", "timestamp"]; data = expenses; filename = "expenses.csv"; }
       const csv = [headers.join(","), ...data.map(row => headers.map(h => row[h] || "").join(","))].join("\n");
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      a.click();
+      a.href = url; a.download = filename; a.click();
       URL.revokeObjectURL(url);
     }
 
