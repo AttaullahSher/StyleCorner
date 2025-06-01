@@ -144,6 +144,7 @@
   <script>
     const SHEET_ID = "1UfLjgdC5rsVOm4bKar81GHUZy_X8TEFU928JrDPG418";
     const API_KEY = "AIzaSyCGwzmW2Ylzq4jHJmawcEOUxiv7WQSKGKI";
+    const GOOGLE_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby2TJtHRq4zigAKvuqMNDluV646YFoA7ojFxukmyGqQCFdRQOo9GOsLS1OAMWeOmTw/exec";
     const partners = [
       { name: "Hafsa", investment: 25000, profitShare: 0.28 },
       { name: "Talha", investment: 25000, profitShare: 0.26 },
@@ -184,14 +185,16 @@
           quantity: parseInt(row[2]) || "",
           amount: parseFloat(row[3]) || 0,
           date: row[4],
-          name: row[5] || ""
+          name: row[5] || "",
+          timestamp: row[6] || row[4] // Use timestamp if available, fallback to date
         })) || [];
 
         // Load expenses
         expenses = expRes.data.values?.slice(1).map(row => ({
           type: row[0],
           amount: parseFloat(row[1]) || 0,
-          date: row[2]
+          date: row[2],
+          timestamp: row[3] || row[2] // Use timestamp if available, fallback to date
         })) || [];
 
         // Check if all sheets are empty
@@ -270,18 +273,21 @@
     async function saveToSheets() {
       try {
         const invData = [["category", "quantity", "total_value"], ...inventory.map(i => [i.category, i.quantity.toString(), i.total_value.toString()])];
-        const transData = [["type", "category", "quantity", "amount", "date", "name"], ...transactions.map(t => [t.type, t.category, t.quantity.toString(), t.amount.toString(), t.date, t.name])];
-        const expData = [["type", "amount", "date"], ...expenses.map(e => [e.type, e.amount.toString(), e.date])];
+        const transData = [["type", "category", "quantity", "amount", "date", "name", "timestamp"], ...transactions.map(t => [t.type, t.category, t.quantity.toString(), t.amount.toString(), t.date, t.name, t.timestamp])];
+        const expData = [["type", "amount", "date", "timestamp"], ...expenses.map(e => [e.type, e.amount.toString(), e.date, e.timestamp])];
         await Promise.all([
-          axios.post("http://localhost:3000/save", { sheet: "Inventory", data: invData }),
-          axios.post("http://localhost:3000/save", { sheet: "Transactions", data: transData }),
-          axios.post("http://localhost:3000/save", { sheet: "Expenses", data: expData }),
+          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Inventory", data: JSON.stringify(invData) }),
+          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Transactions", data: JSON.stringify(transData) }),
+          axios.post(GOOGLE_APPS_SCRIPT_URL, { sheet: "Expenses", data: JSON.stringify(expData) }),
         ]);
         localStorage.setItem("totalCash", totalCash.toString());
       } catch (err) {
-        document.getElementById("notification").textContent = "Failed to save data. Ensure the server is running on port 3000.";
+        document.getElementById("notification").textContent = "Save failed. Data may not be updated. Refreshing to retry...";
         document.getElementById("notification").classList.remove("hidden");
-        setTimeout(() => document.getElementById("notification").classList.add("hidden"), 3000);
+        setTimeout(() => {
+          document.getElementById("notification").classList.add("hidden");
+          location.reload(); // Refresh page to retry loading
+        }, 3000);
         console.error("Error saving data:", err);
       }
     }
@@ -311,8 +317,9 @@
         quantity: "",
         amount: e.amount,
         date: e.date,
-        name: e.type
-      }))].sort((a, b) => new Date(b.date) - new Date(a.date)); // Descending order (latest first)
+        name: e.type,
+        timestamp: e.timestamp
+      }))].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by timestamp in descending order
       document.getElementById("transactionsList").innerHTML = allTransactions.map((t, index) => `
         <div class="bg-white p-3 rounded-lg shadow-md flex justify-between items-center hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-sm">
@@ -395,6 +402,9 @@
       const amount = parseFloat(document.getElementById("amount").value);
       const name = document.getElementById("name")?.value;
       const expenseType = document.getElementById("expenseType")?.value;
+      const now = new Date();
+      const date = now.toISOString().split("T")[0]; // YYYY-MM-DD
+      const timestamp = now.toISOString(); // Full timestamp (e.g., 2025-06-01T14:06:00.000Z)
 
       if ((type !== "expense" && category && quantity > 0 && amount > 0 && name) || (type === "expense" && expenseType && amount > 0)) {
         if (type === "sale" && (!inventory.find(i => i.category === category) || inventory.find(i => i.category === category).quantity < quantity)) {
@@ -423,9 +433,9 @@
             item.total_value += amount;
             totalCash -= amount;
           }
-          transactions.push({ type: type.charAt(0).toUpperCase() + type.slice(1), category, quantity, amount, date: new Date().toISOString().split("T")[0], name });
+          transactions.push({ type: type.charAt(0).toUpperCase() + type.slice(1), category, quantity, amount, date, name, timestamp });
         } else {
-          expenses.push({ type: expenseType, amount, date: new Date().toISOString().split("T")[0] });
+          expenses.push({ type: expenseType, amount, date, timestamp });
           totalCash -= amount;
         }
 
@@ -454,8 +464,9 @@
         quantity: "",
         amount: e.amount,
         date: e.date,
-        name: e.type
-      }))].sort((a, b) => new Date(b.date) - new Date(a.date));
+        name: e.type,
+        timestamp: e.timestamp
+      }))].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       const transaction = allTransactions[index];
 
       if (transaction.type === "Purchase") {
@@ -486,7 +497,7 @@
         transactions = transactions.filter(t => t !== transaction);
       } else if (transaction.type === "Expense") {
         totalCash += transaction.amount;
-        expenses = expenses.filter(e => e.date !== transaction.date || e.amount !== transaction.amount || e.type !== transaction.name);
+        expenses = expenses.filter(e => e.date !== transaction.date || e.amount !== transaction.amount || e.type !== transaction.name || e.timestamp !== transaction.timestamp);
       }
 
       await saveToSheets();
@@ -500,11 +511,11 @@
         data = inventory;
         filename = "inventory.csv";
       } else if (type === "transactions") {
-        headers = ["type", "category", "quantity", "amount", "date", "name"];
+        headers = ["type", "category", "quantity", "amount", "date", "name", "timestamp"];
         data = transactions;
         filename = "transactions.csv";
       } else {
-        headers = ["type", "amount", "date"];
+        headers = ["type", "amount", "date", "timestamp"];
         data = expenses;
         filename = "expenses.csv";
       }
