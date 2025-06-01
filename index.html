@@ -17,6 +17,19 @@
     #inventoryList i {
       display: none;
     }
+    /* Ensure 4-card grid on mobile for partners */
+    @media (max-width: 640px) {
+      #partnersList {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.5rem;
+      }
+      #partnersList > div {
+        padding: 0.5rem;
+      }
+      #partnersList p {
+        font-size: 0.75rem; /* Smaller text on mobile */
+      }
+    }
   </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-800">
@@ -41,35 +54,35 @@
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
           <div class="text-center">
             <p class="font-semibold text-blue-800 text-sm">Aqil</p>
-            <p class="text-sm">Investment: 25,000 PKR</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="aqilShare">0 PKR</p>
+            <p class="text-sm">25%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="aqilShare">25,000.00 PKR</p>
           </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
           <div class="text-center">
             <p class="font-semibold text-blue-800 text-sm">Talha</p>
-            <p class="text-sm">Investment: 25,000 PKR</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="talhaShare">0 PKR</p>
+            <p class="text-sm">25%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="talhaShare">25,000.00 PKR</p>
           </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
           <div class="text-center">
             <p class="font-semibold text-blue-800 text-sm">Atta</p>
-            <p class="text-sm">Investment: 25,000 PKR</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="attaShare">0 PKR</p>
+            <p class="text-sm">25%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="attaShare">25,000.00 PKR</p>
           </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
           <div class="text-center">
             <p class="font-semibold text-blue-800 text-sm">Waseem</p>
-            <p class="text-sm">Investment: 25,000 PKR</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="waseemShare">0 PKR</p>
+            <p class="text-sm">25%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="waseemShare">25,000.00 PKR</p>
           </div>
         </div>
       </div>
       <p class="mt-4 text-blue-800 text-sm flex items-center">
         <i class="fas fa-coins mr-2"></i> Total Cash: 
-        <span id="totalCash" class="font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded-full ml-1">0 PKR</span>
+        <span id="totalCash" class="font-bold bg-blue-100 text-blue-800 px-2 py-1 rounded-full ml-1">100,000.00 PKR</span>
       </p>
     </div>
 
@@ -128,7 +141,7 @@
       { name: "Waseem", investment: 25000 }
     ];
     const PASSWORD = "2532";
-    let totalCash = 100000; // Initial cash in hand
+    let totalCash = 100000; // Initial cash in hand as a number
     let inventory = [];
     let transactions = [];
     let expenses = [];
@@ -165,9 +178,9 @@
           date: row[2],
           receipt: row[3] || "None"
         })) || [];
-        // Update totalCash if data exists, otherwise use initial 100,000
-        const savedCash = parseFloat(localStorage.getItem("totalCash")) || expRes.data.values?.[0]?.[3];
-        if (savedCash) totalCash = savedCash;
+        // Ensure totalCash is a number
+        const savedCash = parseFloat(localStorage.getItem("totalCash"));
+        totalCash = isNaN(savedCash) ? totalCash : savedCash;
         updateUI();
       } catch (err) {
         document.getElementById("notification").textContent = "Failed to load data from Google Sheets. Check API key and sharing settings.";
@@ -202,12 +215,13 @@
 
     function updateUI() {
       const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
-      const profit = totalCash - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
+      // Ensure totalCash is a number before calculations
+      const profit = (totalCash || 0) - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
       document.getElementById("aqilShare").textContent = ((partners[0].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
       document.getElementById("talhaShare").textContent = ((partners[1].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
       document.getElementById("attaShare").textContent = ((partners[2].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
       document.getElementById("waseemShare").textContent = ((partners[3].investment / totalInvestment) * (profit + totalInvestment)).toFixed(2) + " PKR";
-      document.getElementById("totalCash").textContent = `${totalCash.toFixed(2)} PKR`;
+      document.getElementById("totalCash").textContent = `${(totalCash || 0).toFixed(2)} PKR`;
 
       document.getElementById("inventoryList").innerHTML = inventory.map(item => `
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200">
