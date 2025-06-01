@@ -63,30 +63,30 @@
       <div id="partnersList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-center">
-            <p class="font-semibold text-green-800 text-sm">Aqil</p>
-            <p class="text-sm">25%</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="aqilShare">25000</p>
+            <p class="font-semibold text-green-800 text-sm">Hafsa</p>
+            <p class="text-sm">28%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="hafsaShare">25000</p>
           </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-center">
             <p class="font-semibold text-green-800 text-sm">Talha</p>
-            <p class="text-sm">25%</p>
+            <p class="text-sm">26%</p>
             <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="talhaShare">25000</p>
           </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-center">
-            <p class="font-semibold text-green-800 text-sm">Atta</p>
-            <p class="text-sm">25%</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="attaShare">25000</p>
+            <p class="font-semibold text-green-800 text-sm">Sadaf</p>
+            <p class="text-sm">23%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="sadafShare">25000</p>
           </div>
         </div>
         <div class="bg-white p-4 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-center">
-            <p class="font-semibold text-green-800 text-sm">Waseem</p>
-            <p class="text-sm">25%</p>
-            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="waseemShare">25000</p>
+            <p class="font-semibold text-green-800 text-sm">Atta</p>
+            <p class="text-sm">23%</p>
+            <p class="text-sm font-bold bg-green-100 text-green-800 px-2 py-1 rounded-full" id="attaShare">25000</p>
           </div>
         </div>
       </div>
@@ -145,10 +145,10 @@
     const SHEET_ID = "1UfLjgdC5rsVOm4bKar81GHUZy_X8TEFU928JrDPG418";
     const API_KEY = "AIzaSyCGwzmW2Ylzq4jHJmawcEOUxiv7WQSKGKI";
     const partners = [
-      { name: "Aqil", investment: 25000 },
-      { name: "Talha", investment: 25000 },
-      { name: "Atta", investment: 25000 },
-      { name: "Waseem", investment: 25000 }
+      { name: "Hafsa", investment: 25000, profitShare: 0.28 },
+      { name: "Talha", investment: 25000, profitShare: 0.26 },
+      { name: "Sadaf", investment: 25000, profitShare: 0.23 },
+      { name: "Atta", investment: 25000, profitShare: 0.23 }
     ];
     const PASSWORD = "2532";
     let totalCash = 100000; // Initial cash in hand as a number
@@ -171,10 +171,10 @@
           quantity: parseInt(row[1]) || 0,
           total_value: parseFloat(row[2]) || 0
         })) || [
-          { category: "Male Unstitched", quantity: 0, total_value: 0 },
-          { category: "Female Unstitched", quantity: 0, total_value: 0 },
-          { category: "Male Stitched", quantity: 0, total_value: 0 },
-          { category: "Female Stitched", quantity: 0, total_value: 0 }
+          { category: "Male", quantity: 0, total_value: 0 },
+          { category: "Female 2pc", quantity: 0, total_value: 0 },
+          { category: "Female 3pc", quantity: 0, total_value: 0 },
+          { category: "Staller", quantity: 0, total_value: 0 }
         ];
 
         // Load transactions
@@ -207,10 +207,10 @@
           // Recalculate totalCash and inventory based on transactions and expenses
           totalCash = 100000; // Start from initial cash
           inventory = [
-            { category: "Male Unstitched", quantity: 0, total_value: 0 },
-            { category: "Female Unstitched", quantity: 0, total_value: 0 },
-            { category: "Male Stitched", quantity: 0, total_value: 0 },
-            { category: "Female Stitched", quantity: 0, total_value: 0 }
+            { category: "Male", quantity: 0, total_value: 0 },
+            { category: "Female 2pc", quantity: 0, total_value: 0 },
+            { category: "Female 3pc", quantity: 0, total_value: 0 },
+            { category: "Staller", quantity: 0, total_value: 0 }
           ];
 
           // Process transactions to update inventory and totalCash
@@ -254,10 +254,10 @@
         totalCash = 100000;
         localStorage.removeItem("totalCash");
         inventory = [
-          { category: "Male Unstitched", quantity: 0, total_value: 0 },
-          { category: "Female Unstitched", quantity: 0, total_value: 0 },
-          { category: "Male Stitched", quantity: 0, total_value: 0 },
-          { category: "Female Stitched", quantity: 0, total_value: 0 }
+          { category: "Male", quantity: 0, total_value: 0 },
+          { category: "Female 2pc", quantity: 0, total_value: 0 },
+          { category: "Female 3pc", quantity: 0, total_value: 0 },
+          { category: "Staller", quantity: 0, total_value: 0 }
         ];
         transactions = [];
         expenses = [];
@@ -289,10 +289,10 @@
     function updateUI() {
       const totalInvestment = partners.reduce((sum, p) => sum + p.investment, 0);
       const profit = (totalCash || 0) - totalInvestment - expenses.reduce((sum, e) => sum + e.amount, 0);
-      document.getElementById("aqilShare").textContent = ((partners[0].investment / totalInvestment) * (profit + totalInvestment)).toFixed(0);
-      document.getElementById("talhaShare").textContent = ((partners[1].investment / totalInvestment) * (profit + totalInvestment)).toFixed(0);
-      document.getElementById("attaShare").textContent = ((partners[2].investment / totalInvestment) * (profit + totalInvestment)).toFixed(0);
-      document.getElementById("waseemShare").textContent = ((partners[3].investment / totalInvestment) * (profit + totalInvestment)).toFixed(0);
+      document.getElementById("hafsaShare").textContent = ((partners[0].profitShare) * profit + partners[0].investment).toFixed(0);
+      document.getElementById("talhaShare").textContent = ((partners[1].profitShare) * profit + partners[1].investment).toFixed(0);
+      document.getElementById("sadafShare").textContent = ((partners[2].profitShare) * profit + partners[2].investment).toFixed(0);
+      document.getElementById("attaShare").textContent = ((partners[3].profitShare) * profit + partners[3].investment).toFixed(0);
       document.getElementById("totalCash").textContent = `${(totalCash || 0).toFixed(2)} PKR`;
 
       document.getElementById("inventoryList").innerHTML = inventory.map(item => `
@@ -312,7 +312,7 @@
         amount: e.amount,
         date: e.date,
         name: e.type
-      }))].sort((a, b) => new Date(a.date) - new Date(b.date)); // Reverse order (most recent first)
+      }))].sort((a, b) => new Date(b.date) - new Date(a.date)); // Descending order (latest first)
       document.getElementById("transactionsList").innerHTML = allTransactions.map((t, index) => `
         <div class="bg-white p-3 rounded-lg shadow-md flex justify-between items-center hover:shadow-xl transition-shadow duration-200 border border-green-200">
           <div class="text-sm">
@@ -340,10 +340,10 @@
           <div>
             <label class="block text-xs font-medium text-gray-700">Category</label>
             <select id="category" class="border p-2 rounded w-full text-sm focus:ring-2 focus:ring-green-500">
-              <option value="Male Unstitched">Male Unstitched</option>
-              <option value="Female Unstitched">Female Unstitched</option>
-              <option value="Male Stitched">Male Stitched</option>
-              <option value="Female Stitched">Female Stitched</option>
+              <option value="Male">Male</option>
+              <option value="Female 2pc">Female 2pc</option>
+              <option value="Female 3pc">Female 3pc</option>
+              <option value="Staller">Staller</option>
             </select>
           </div>
           <div>
@@ -361,10 +361,10 @@
           <div>
             <label class="block text-xs font-medium text-gray-700">Type</label>
             <select id="expenseType" class="border p-2 rounded w-full text-sm focus:ring-2 focus:ring-green-500">
-              <option value="Stitching">Stitching</option>
-              <option value="Courier">Courier</option>
+              <option value="Delivery">Delivery</option>
+              <option value="Travel">Travel</option>
               <option value="Marketing">Marketing</option>
-              <option value="Other">Other</option>
+              <option value="Others">Others</option>
             </select>
           </div>
         ` : `
@@ -455,7 +455,7 @@
         amount: e.amount,
         date: e.date,
         name: e.type
-      }))].sort((a, b) => new Date(a.date) - new Date(b.date));
+      }))].sort((a, b) => new Date(b.date) - new Date(a.date));
       const transaction = allTransactions[index];
 
       if (transaction.type === "Purchase") {
